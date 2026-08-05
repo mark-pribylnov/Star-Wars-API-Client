@@ -1,0 +1,12 @@
+@use './styles/placeholders';
+
+body {
+  background-color: rgb(68, 68, 68);
+  color: white;
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-inline: 20px;
+}
