@@ -1,12 +1,18 @@
 @use './styles/placeholders';
 
 body {
-  background-color: rgb(68, 68, 68);
   color: white;
+  margin: 0;
 }
 
 .app-wrapper {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding-inline: 20px;
+  background-image: url('./assets/images//app-bg.png');
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }

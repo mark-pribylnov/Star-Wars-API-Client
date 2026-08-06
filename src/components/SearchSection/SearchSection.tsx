@@ -7,6 +7,6 @@ type SearchSectionProps = {
 
 export class SearchSection extends Component<SearchSectionProps> {
   render() {
-    return <h1 className={styles.root}>{this.props.name}</h1>;
+    return <div className={styles.root}>{this.props.name}</div>;
   }
 }

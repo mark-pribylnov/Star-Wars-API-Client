@@ -7,6 +7,6 @@ type ResultsSectionProps = {
 
 export class ResultsSection extends Component<ResultsSectionProps> {
   render() {
-    return <h1 className={styles.root}>{this.props.results}</h1>;
+    return <div className={styles.root}>{this.props.results}</div>;
   }
 }
