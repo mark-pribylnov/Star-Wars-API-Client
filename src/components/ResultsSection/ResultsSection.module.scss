@@ -1,5 +1,74 @@
-@use '../../styles/placeholders' as *;
+@use '../../styles/shared/placeholders' as *;
+@use '../../styles/shared/mixins' as *;
 
 .root {
   @extend %section-base;
+  margin-inline: auto;
+  margin-top: 20px;
+}
+
+.search-heading {
+  @include section-heading(#96cbf2);
+}
+
+.results-number {
+  font-size: 0.9em;
+  background-color: #96ccf2;
+  color: #0239ab;
+  border-radius: 10px;
+  padding: 1px 10px;
+}
+
+.table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+
+  thead {
+    th {
+      text-align: center;
+      text-transform: uppercase;
+      color: #468ddd;
+      padding-bottom: 5px;
+    }
+
+    tr {
+      border-bottom: 1px solid #464e5d6f;
+    }
+  }
+
+  tbody {
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      padding-right: 15px;
+    }
+
+    th,
+    td {
+      padding-block: 5px;
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid #464e5d6f;
+    }
+
+    tr {
+      cursor: pointer;
+    }
+    tr:hover {
+      background-color: rgba(150, 203, 242, 0.12);
+    }
+  }
+}
+
+.name-wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.item-img {
+  max-height: 35px;
+  border-radius: 5px;
 }

@@ -10,7 +10,7 @@ function App() {
     <div className={styles['app-wrapper']}>
       <Header />
       <SearchSection />
-      <ResultsSection results="Results" />
+      <ResultsSection resultsNumber={5} />
     </div>
   );
 }

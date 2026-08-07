@@ -1,8 +1,10 @@
-@use '../../styles/placeholders' as *;
-@use '../../styles/abstracts/functions/pxToRem' as *;
+@use '../../styles/shared' as *;
+@use '../../styles/abstracts/functions' as *;
 
 .root {
   @extend %section-base;
+  align-self: center;
+  min-width: 55%;
   background-color: #0c1726;
   border: 1px solid #464e5d;
 }
@@ -14,12 +16,7 @@
 }
 
 .search-heading {
-  display: flex;
-  margin: 0;
-  gap: 10px;
-  font-size: pxToRem(18);
-  color: #96cbf2;
-  text-transform: uppercase;
+  @include section-heading(#96cbf2);
 }
 
 .search-input {
