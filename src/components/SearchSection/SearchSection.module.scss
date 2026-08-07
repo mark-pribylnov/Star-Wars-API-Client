@@ -1,5 +1,56 @@
 @use '../../styles/placeholders' as *;
+@use '../../styles/abstracts/functions/pxToRem' as *;
 
 .root {
   @extend %section-base;
+  background-color: #0c1726;
+  border: 1px solid #464e5d;
+}
+
+.search-form {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-heading {
+  display: flex;
+  margin: 0;
+  gap: 10px;
+  font-size: pxToRem(18);
+  color: #96cbf2;
+  text-transform: uppercase;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #050c16;
+  border: 1px solid #96cbf2;
+  outline: none;
+  color: #acabb1;
+  &:focus {
+    border-color: #fae82c;
+  }
+}
+
+.search-button {
+  padding-inline: pxToRem(15);
+  background-color: #fecc42;
+  text-transform: uppercase;
+  border-radius: 5px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  &:hover {
+    transform: scale(0.95);
+  }
+}
+
+.search-description {
+  margin-bottom: 0;
+  color: #b5b4ba;
+  font-size: 0.9rem;
 }
