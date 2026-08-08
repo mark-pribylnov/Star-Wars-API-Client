@@ -24,9 +24,10 @@
   padding: 10px;
   border-radius: 5px;
   background-color: #050c16;
-  border: 1px solid #96cbf2;
+  border: 1px solid transparent;
   outline: none;
   color: #acabb1;
+  font-size: 1rem;
   &:focus {
     border-color: #fae82c;
   }
@@ -44,10 +45,4 @@
   &:hover {
     transform: scale(0.95);
   }
-}
-
-.search-description {
-  margin-bottom: 0;
-  color: #b5b4ba;
-  font-size: 0.9rem;
 }
