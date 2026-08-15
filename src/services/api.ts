@@ -1,5 +1,8 @@
 import { CATEGORIES, type DataShell, type DataRefined } from '../types/base';
-import { changeTitleToNameProperty } from '../utils/utils';
+import {
+  addDescriptionToData,
+  changeTitleToNameProperty,
+} from '../utils/utils';
 import ValidationService from './validation';
 
 export default class ApiService {
@@ -29,6 +32,9 @@ export default class ApiService {
     if (!this.validator.validateAllCategories(data))
       throw new Error('Received data failed schema validation');
 
-    return changeTitleToNameProperty(data);
+    const dataRefined = changeTitleToNameProperty(data);
+    const withDescription = addDescriptionToData(dataRefined);
+
+    return withDescription;
   }
 }

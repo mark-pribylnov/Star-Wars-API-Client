@@ -1,5 +1,10 @@
 import { CATEGORIES } from '../types';
-import type { DataOriginal, DataRefined } from '../types/base';
+import type {
+  DataOriginal,
+  DataRefined,
+  DataWithDescription,
+} from '../types/base';
+import { itemDescriptions } from '../data/itemDescriptions';
 
 export function changeTitleToNameProperty(arr: DataOriginal[]): DataRefined[] {
   return arr.map((entry) => {
@@ -13,4 +18,29 @@ export function changeTitleToNameProperty(arr: DataOriginal[]): DataRefined[] {
     }
     return entry;
   });
+}
+
+export function addDescriptionToData(
+  data: DataRefined[]
+): DataWithDescription[] {
+  const withDescription = data.map((group) => {
+    const entriesWithDescription = group.entries.map((entry) => {
+      const description = itemDescriptions.find(
+        (item) => item.name === entry.name
+      )?.description;
+
+      if (!description) throw new Error('Description not found');
+
+      const entryWithDescription = { ...entry, description };
+      return entryWithDescription;
+    });
+
+    const groupWithDescription = {
+      category: group.category,
+      entries: entriesWithDescription,
+    } as DataWithDescription;
+
+    return groupWithDescription;
+  });
+  return withDescription;
 }

@@ -49,3 +49,24 @@ export type DataOriginal =
 export type DataRefined =
   | Exclude<DataOriginal, FilmEntriesOriginal>
   | FilmEntriesRefined;
+
+type WithDescription<T> = T & { description: string };
+
+export type CategoryUnitWithDescription = WithDescription<CategoryUnit>;
+
+export type DataWithDescription =
+  | { category: typeof CATEGORIES.people; entries: WithDescription<Character>[] }
+  | { category: typeof CATEGORIES.planets; entries: WithDescription<Planet>[] }
+  | { category: typeof CATEGORIES.species; entries: WithDescription<Specie>[] }
+  | {
+      category: typeof CATEGORIES.starships;
+      entries: WithDescription<Starship>[];
+    }
+  | {
+      category: typeof CATEGORIES.vehicles;
+      entries: WithDescription<Vehicle>[];
+    }
+  | {
+      category: typeof CATEGORIES.films;
+      entries: WithDescription<FilmRefined>[];
+    };

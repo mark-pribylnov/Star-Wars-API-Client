@@ -9,7 +9,9 @@ export default class SearchSection extends Component {
   private inputName = 'searchTerm';
   private initialSearchTerm = localStorage.getItem(this.inputName);
 
-  async search(searchTerm: string): Promise<CategoryUnit[]> {
+  async search(searchTerm: string): Promise<void | CategoryUnit[]> {
+    if (!searchTerm) return;
+
     const data = await this.api.getAllData();
     const match: CategoryUnit[] = [];
 
