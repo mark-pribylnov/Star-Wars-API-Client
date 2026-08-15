@@ -15,7 +15,7 @@ import {
   VehicleSchema,
 } from '../types';
 import { CATEGORIES } from '../types';
-import type { Data, DataShell } from '../types/base';
+import type { DataOriginal, DataShell } from '../types/base';
 
 export default class ValidationService {
   private ajv = new Ajv();
@@ -36,7 +36,7 @@ export default class ValidationService {
     [CATEGORIES.vehicles]: this.validateVehicle,
   };
 
-  validateAllCategories(data: DataShell[]): data is Data[] {
+  validateAllCategories(data: DataShell[]): data is DataOriginal[] {
     const isValid = data.every(({ category, entries }) => {
       if (!Array.isArray(entries)) throw new Error('Array expected');
 

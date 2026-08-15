@@ -1,6 +1,6 @@
 import type { JSONSchemaType } from 'ajv';
 
-export type Film = {
+export type FilmOriginal = {
   title: string;
   episode_id: number;
   opening_crawl: string;
@@ -16,6 +16,8 @@ export type Film = {
   edited: string;
   url: string;
 };
+
+export type FilmRefined = Omit<FilmOriginal, 'title'> & { name: string };
 
 const FilmSchemaContent = {
   type: 'object',
@@ -54,7 +56,7 @@ const FilmSchemaContent = {
   },
 } as const;
 
-export const FilmSchema: JSONSchemaType<Film> = {
+export const FilmSchema: JSONSchemaType<FilmOriginal> = {
   ...FilmSchemaContent,
   additionalProperties: false,
 };
