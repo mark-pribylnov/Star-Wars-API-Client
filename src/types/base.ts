@@ -16,7 +16,7 @@ export const CATEGORIES = {
 
 export type CategoryUnit =
   | Character
-  | FilmOriginal
+  | FilmRefined
   | Planet
   | Specie
   | Starship

@@ -7,7 +7,7 @@ export default class ApiService {
 
   private validator = new ValidationService();
 
-  private async getAllData(): Promise<DataRefined[]> {
+  async getAllData(): Promise<DataRefined[]> {
     const urls = Object.values(CATEGORIES).map((category) => {
       return { category, url: this.BASE_URL + category };
     });
@@ -30,16 +30,5 @@ export default class ApiService {
       throw new Error('Received data failed schema validation');
 
     return changeTitleToNameProperty(data);
-  }
-
-  async search(searchTerm: string): Promise<void> {
-    const data = await this.getAllData();
-    const match = [];
-
-    data.forEach((entries) => {
-      entries.entries.forEach((entry) => {
-        if (entry.name.includes(searchTerm)) match.push(entry);
-      });
-    });
   }
 }

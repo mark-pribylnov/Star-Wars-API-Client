@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 
 import {
   type Character,
-  type Film,
+  type FilmOriginal,
   type Planet,
   type Specie,
   type Starship,
@@ -21,7 +21,7 @@ export default class ValidationService {
   private ajv = new Ajv();
 
   private validateCharacter = this.ajv.compile<Character>(CharacterSchema);
-  private validateFilm = this.ajv.compile<Film>(FilmSchema);
+  private validateFilm = this.ajv.compile<FilmOriginal>(FilmSchema);
   private validatePlanet = this.ajv.compile<Planet>(PlanetSchema);
   private validateSpecie = this.ajv.compile<Specie>(SpecieSchema);
   private validateStarship = this.ajv.compile<Starship>(StarshipSchema);

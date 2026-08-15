@@ -1,4 +1,6 @@
 // TODO: migrate CSS to Tailwind
+// TODO: handle errors in ApiService from the API
+// TODO: in types 'additional property: false' is duplicated in each file
 
 import styles from './App.module.scss';
 import SearchSection from './components/SearchSection/SearchSection';
