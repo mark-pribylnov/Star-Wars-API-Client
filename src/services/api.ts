@@ -1,4 +1,8 @@
-import { CATEGORIES, type DataShell, type DataRefined } from '../types/base';
+import {
+  CATEGORIES,
+  type DataShell,
+  type DataWithDescription,
+} from '../types/base';
 import {
   addDescriptionToData,
   changeTitleToNameProperty,
@@ -10,7 +14,7 @@ export default class ApiService {
 
   private validator = new ValidationService();
 
-  async getAllData(): Promise<DataRefined[]> {
+  async getAllData(): Promise<DataWithDescription[]> {
     const urls = Object.values(CATEGORIES).map((category) => {
       return { category, url: this.BASE_URL + category };
     });

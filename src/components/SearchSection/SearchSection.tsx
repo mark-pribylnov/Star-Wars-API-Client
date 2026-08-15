@@ -1,27 +1,18 @@
 import { Component, type SubmitEvent } from 'react';
-import ApiService from '../../services/api';
 import styles from './SearchSection.module.scss';
 import SearchIcon from '../../assets/icons/search/SearchIcon';
 import type { CategoryUnit } from '../../types/base';
 
-export default class SearchSection extends Component {
-  private api = new ApiService();
+type SearchSectionProps = {
+  search: (searchTerm: string) => Promise<void | CategoryUnit[]>;
+};
+
+export default class SearchSection extends Component<SearchSectionProps> {
   private inputName = 'searchTerm';
   private initialSearchTerm = localStorage.getItem(this.inputName);
 
-  async search(searchTerm: string): Promise<void | CategoryUnit[]> {
-    if (!searchTerm) return;
-
-    const data = await this.api.getAllData();
-    const match: CategoryUnit[] = [];
-
-    data.forEach((group) => {
-      group.entries.forEach((entry) => {
-        if (entry.name.includes(searchTerm)) match.push(entry);
-      });
-    });
-
-    return match;
+  constructor(props: SearchSectionProps) {
+    super(props);
   }
 
   private handleSubmit = (e: SubmitEvent) => {
@@ -37,7 +28,7 @@ export default class SearchSection extends Component {
 
     localStorage.setItem(this.inputName, searchTerm);
 
-    this.search(searchTerm);
+    this.props.search(searchTerm);
   };
 
   render() {

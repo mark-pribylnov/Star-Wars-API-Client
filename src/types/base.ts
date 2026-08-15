@@ -55,7 +55,10 @@ type WithDescription<T> = T & { description: string };
 export type CategoryUnitWithDescription = WithDescription<CategoryUnit>;
 
 export type DataWithDescription =
-  | { category: typeof CATEGORIES.people; entries: WithDescription<Character>[] }
+  | {
+      category: typeof CATEGORIES.people;
+      entries: WithDescription<Character>[];
+    }
   | { category: typeof CATEGORIES.planets; entries: WithDescription<Planet>[] }
   | { category: typeof CATEGORIES.species; entries: WithDescription<Specie>[] }
   | {

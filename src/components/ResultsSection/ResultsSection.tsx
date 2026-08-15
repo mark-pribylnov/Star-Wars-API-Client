@@ -1,13 +1,33 @@
 import { Component } from 'react';
 import styles from './ResultsSection.module.scss';
+import type { CategoryUnitWithDescription } from '../../types/base';
 
 type ResultsSectionProps = {
-  resultsNumber: number;
+  searchResults: CategoryUnitWithDescription[];
 };
 
 export default class ResultsSection extends Component<ResultsSectionProps> {
   render() {
-    const { resultsNumber } = this.props;
+    const { searchResults } = this.props;
+    const resultsNumber = searchResults.length;
+
+    const tableRows = searchResults.map((item) => {
+      return (
+        <tr key={item.name}>
+          <th>
+            <span className={styles['name-wrapper']}>
+              <img
+                className={styles['item-img']}
+                src={`/images/searchItems/${encodeURIComponent(item.name)}.png`}
+                alt={item.name}
+              />
+              {item.name}
+            </span>
+          </th>
+          <td>{item.description}</td>
+        </tr>
+      );
+    });
 
     return (
       <div className={styles.root}>
@@ -22,92 +42,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
               <th>Description</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th>
-                <span className={styles['name-wrapper']}>
-                  <img
-                    className={styles['item-img']}
-                    src="/search-items/vader.png"
-                    alt="darth vader"
-                  />
-                  Darth Vader
-                </span>
-              </th>
-              <td>
-                A Dark Lord of the Sith, once Anakin Skywalker, who serves the
-                Galactic Empire and is the enforcer of Emperor Palpatine.
-              </td>
-            </tr>
-            <tr>
-              <th>
-                {' '}
-                <span className={styles['name-wrapper']}>
-                  <img
-                    className={styles['item-img']}
-                    src="/search-items/luke.png"
-                    alt="darth vader"
-                  />
-                  Luke Skywalker
-                </span>
-              </th>
-              <td>
-                A legendary Jedi Knight and hero of the Rebel Alliance who plays
-                a crucial role in the fight against the Galactic Empire.
-              </td>
-            </tr>
-            <tr>
-              <th>
-                {' '}
-                <span className={styles['name-wrapper']}>
-                  <img
-                    className={styles['item-img']}
-                    src="/search-items/planet.png"
-                    alt="darth vader"
-                  />
-                  Tatooine
-                </span>
-              </th>
-              <td>
-                A desert planet and the home of Anakin Skywalker. It is known
-                for its harsh environment and twin suns.
-              </td>
-            </tr>
-            <tr>
-              <th>
-                {' '}
-                <span className={styles['name-wrapper']}>
-                  <img
-                    className={styles['item-img']}
-                    src="/search-items/ship.png"
-                    alt="darth vader"
-                  />
-                  Millennium Falcon
-                </span>
-              </th>
-              <td>
-                A YT-1300 light freighter owned by Han Solo and Chewbacca. It is
-                known for making the Kessel Run in less than 12 parsecs.
-              </td>
-            </tr>
-            <tr>
-              <th>
-                {' '}
-                <span className={styles['name-wrapper']}>
-                  <img
-                    className={styles['item-img']}
-                    src="/search-items/joda.png"
-                    alt="darth vader"
-                  />
-                  Yoda
-                </span>
-              </th>
-              <td>
-                A legendary Jedi Master and one of the most powerful Jedi in the
-                galaxy.
-              </td>
-            </tr>
-          </tbody>
+          <tbody>{tableRows}</tbody>
         </table>
       </div>
     );
