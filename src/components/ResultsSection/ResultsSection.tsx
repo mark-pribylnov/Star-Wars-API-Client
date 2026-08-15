@@ -18,7 +18,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
             <span className={styles['name-wrapper']}>
               <img
                 className={styles['item-img']}
-                src={`/images/searchItems/${encodeURIComponent(item.name)}.png`}
+                src={`/images/searchItems/${encodeURIComponent(item.name)}.jpg`}
                 alt={item.name}
               />
               {item.name}
