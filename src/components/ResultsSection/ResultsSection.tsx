@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import styles from './ResultsSection.module.scss';
 import type { CategoryUnitWithDescription } from '../../types/base';
+import { getItemImageURL } from '../../utils/imageURL';
 
 type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[];
@@ -18,7 +19,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
             <span className={styles['name-wrapper']}>
               <img
                 className={styles['item-img']}
-                src={`/images/searchItems/${encodeURIComponent(item.name)}.jpg`}
+                src={getItemImageURL(item.name)}
                 alt={item.name}
               />
               {item.name}
