@@ -3,12 +3,14 @@
 
 .root {
   @extend %section-base;
-  margin-inline: auto;
   margin-top: 20px;
 }
 
 .search-heading {
   @include section-heading(#96cbf2);
+  &--no-results {
+    justify-content: center;
+  }
 }
 
 .results-number {
@@ -71,4 +73,12 @@
 .item-img {
   max-height: 35px;
   border-radius: 5px;
+}
+
+.no-results-description {
+  text-align: center;
+  &__search-term {
+    color: #fecc42;
+    font-weight: 600;
+  }
 }

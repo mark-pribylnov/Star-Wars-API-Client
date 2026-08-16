@@ -2,6 +2,7 @@
 // TODO: handle errors in ApiService from the API
 // TODO: in types 'additional property: false' is duplicated in each file
 // TODO: show HTTP error to the user, not console
+// TODO: in the end of the project check whether <RebelAllianceIcon/> is used. if not - delete
 
 import { Component } from 'react';
 import styles from './App.module.scss';
@@ -41,7 +42,10 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   search = async (searchTerm: string | null): Promise<void> => {
-    if (!searchTerm) return;
+    if (!searchTerm && searchTerm !== '') {
+      this.setState({ searchTerm });
+      return;
+    }
 
     const data = this.state.data;
     const searchResults: CategoryUnitWithDescription[] = [];
@@ -54,7 +58,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     });
 
     localStorage.setItem(LOCAL_STORAGE_KEYS.searchTerm, searchTerm);
-    this.setState({ searchResults });
+    this.setState({ searchResults, searchTerm });
   };
 
   render() {
@@ -62,7 +66,10 @@ export default class App extends Component<Record<string, never>, AppState> {
       <div className={styles['app-wrapper']}>
         <Header />
         <SearchSection search={this.search} />
-        <ResultsSection searchResults={this.state.searchResults} />
+        <ResultsSection
+          searchResults={this.state.searchResults}
+          searchTerm={this.state.searchTerm}
+        />
       </div>
     );
   }

@@ -1,0 +1,72 @@
+@use '../../styles/shared/placeholders' as *;
+@use '../../styles/shared/mixins' as *;
+@use '../../styles/abstracts/functions' as *;
+
+.root {
+  @extend %section-base;
+  margin-top: 20px;
+}
+
+.no-results-visual {
+  position: relative;
+  max-width: 520px;
+  margin-top: 10px;
+  margin-inline: auto;
+}
+
+.no-results-image {
+  display: block;
+  width: 100%;
+  mask-image:
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-composite: source-in;
+}
+
+.no-results-quote {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  width: min(90%, 360px);
+  text-align: center;
+}
+
+.quote-mark {
+  color: #96cbf2;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.text-wrapper {
+  position: relative;
+  padding: 10px 14px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.55);
+    filter: blur(10px);
+  }
+}
+
+.quote-text {
+  margin: 0;
+  color: white;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+.quote-author {
+  margin: 8px 0 0;
+  color: #96cbf2;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
