@@ -8,15 +8,17 @@ import styles from './App.module.scss';
 import SearchSection from './components/SearchSection/SearchSection';
 import ResultsSection from './components/ResultsSection/ResultsSection';
 import { Header } from './components/Header/Header';
-import type {
-  CategoryUnitWithDescription,
-  DataWithDescription,
+import {
+  LOCAL_STORAGE_KEYS,
+  type CategoryUnitWithDescription,
+  type DataWithDescription,
 } from './types/base';
 import ApiService from './services/api';
 
 type AppState = {
   data: DataWithDescription[];
   searchResults: CategoryUnitWithDescription[];
+  searchTerm: string | null;
 };
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
@@ -27,15 +29,18 @@ export default class App extends Component<Record<string, never>, AppState> {
     this.state = {
       data: [],
       searchResults: [],
+      searchTerm: localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm),
     };
   }
 
   async componentDidMount() {
     const data = await this.api.getAllData();
     this.setState({ data });
+
+    this.search(this.state.searchTerm ?? null);
   }
 
-  search = async (searchTerm: string): Promise<void> => {
+  search = async (searchTerm: string | null): Promise<void> => {
     if (!searchTerm) return;
 
     const data = this.state.data;
@@ -48,6 +53,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       });
     });
 
+    localStorage.setItem(LOCAL_STORAGE_KEYS.searchTerm, searchTerm);
     this.setState({ searchResults });
   };
 

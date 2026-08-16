@@ -26,8 +26,6 @@ export default class SearchSection extends Component<SearchSectionProps> {
     if (typeof searchTerm !== 'string')
       throw new Error('Search term is not a string');
 
-    localStorage.setItem(this.inputName, searchTerm);
-
     this.props.search(searchTerm);
   };
 

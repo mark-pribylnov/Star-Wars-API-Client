@@ -14,6 +14,10 @@ export const CATEGORIES = {
   films: 'films',
 } as const;
 
+export const LOCAL_STORAGE_KEYS = {
+  searchTerm: 'searchTerm',
+} as const;
+
 export type CategoryUnit =
   | Character
   | FilmRefined
