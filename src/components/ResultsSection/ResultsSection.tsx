@@ -3,6 +3,7 @@ import styles from './ResultsSection.module.scss';
 import type { CategoryUnitWithDescription } from '../../types/base';
 import { getItemImageURL } from '../../utils/imageURL';
 import NoResultsVisual from '../NoResultsVisual/NoResultsVisual';
+import clsx from 'clsx';
 
 type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[];
@@ -41,12 +42,10 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     return (
       <div className={styles.root}>
         <h2
-          className={[
+          className={clsx(
             styles['search-heading'],
-            resultsNumber <= 0 && styles['search-heading--no-results'],
-          ]
-            .filter(Boolean)
-            .join(' ')}
+            resultsNumber <= 0 && styles['search-heading--no-results']
+          )}
         >
           {resultsNumber > 0 ? 'Search results' : 'No results found'}
           {resultsNumber > 0 && (
