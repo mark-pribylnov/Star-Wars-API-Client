@@ -33,10 +33,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
         </tr>
       );
     });
-    // USE clsx
     // write a helper for checking for searchResults in JSX because it looks ugly writing the same condition many times
-    // Make yoda select a random quote
-    // edit class names in the visual because it looks sloppy
     // fix the situation when the searchTerm is null. now the app crashed with the Error I created
 
     return (

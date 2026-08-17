@@ -7,14 +7,14 @@
   margin-top: 20px;
 }
 
-.no-results-visual {
+.wrapper {
   position: relative;
   max-width: 520px;
   margin-top: 10px;
   margin-inline: auto;
 }
 
-.no-results-image {
+.image {
   display: block;
   width: 100%;
   mask-image:
@@ -27,19 +27,13 @@
   -webkit-mask-composite: source-in;
 }
 
-.no-results-quote {
+.quote-wrapper {
   position: absolute;
   left: 50%;
   bottom: 8%;
   transform: translateX(-50%);
   width: min(90%, 360px);
   text-align: center;
-}
-
-.quote-mark {
-  color: #96cbf2;
-  font-size: 1.1rem;
-  line-height: 1;
 }
 
 .text-wrapper {
@@ -56,14 +50,14 @@
   }
 }
 
-.quote-text {
+.text {
   margin: 0;
   color: white;
   line-height: 1.4;
   white-space: pre-line;
 }
 
-.quote-author {
+.author {
   margin: 8px 0 0;
   color: #96cbf2;
   font-size: 0.9rem;
