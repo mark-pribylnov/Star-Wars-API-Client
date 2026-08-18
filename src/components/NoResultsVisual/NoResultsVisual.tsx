@@ -6,10 +6,6 @@ type NoResultsVisualProps = {
 };
 
 export default class NoResultsVisual extends Component<NoResultsVisualProps> {
-  // componentDidMount() {
-  //   if (!this.props.searchTerm) throw new Error('Search term is NULL');
-  // }
-
   render() {
     return (
       <div className={styles['wrapper']}>

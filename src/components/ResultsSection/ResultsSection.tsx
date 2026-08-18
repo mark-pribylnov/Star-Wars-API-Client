@@ -34,7 +34,6 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
         </tr>
       );
     });
-    // fix the situation when the searchTerm is null. now the app crashed with the Error I created
 
     return (
       <div className={styles.root}>
