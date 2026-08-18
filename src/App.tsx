@@ -15,6 +15,7 @@ import {
   type DataWithDescription,
 } from './types/base';
 import ApiService from './services/api';
+import { initialResults } from './data/initialResults';
 
 type AppState = {
   data: DataWithDescription[];
@@ -24,39 +25,29 @@ type AppState = {
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
 
-  private searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
-
   constructor(props: Record<string, never>) {
     super(props);
+
+    const searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
+
     this.api = new ApiService();
     this.state = {
       data: [],
-      searchResults: [],
-      searchTerm: this.searchTerm,
+      searchResults: this.getCachedResults() ?? initialResults,
+      searchTerm,
     };
-  }
-
-  private getInitialResults(data: DataWithDescription[]) {
-    return data.map((group) => group.entries[0]);
   }
 
   async componentDidMount() {
     const data = await this.api.getAllData();
-    const initialResults = this.getInitialResults(data);
-
-    this.setState({ data, searchResults: initialResults });
-    this.search(this.searchTerm);
+    this.setState({ data });
   }
 
   search = async (searchTerm: string | null): Promise<void> => {
     const trimmedTerm = searchTerm?.trim();
 
     if (!trimmedTerm) {
-      this.setState({
-        searchTerm: null,
-        searchResults: this.getInitialResults(this.state.data),
-      });
-      localStorage.removeItem(LOCAL_STORAGE_KEYS.searchTerm);
+      this.handleEmptySubmit();
       return;
     }
 
@@ -77,7 +68,30 @@ export default class App extends Component<Record<string, never>, AppState> {
     searchTerm: string
   ) {
     localStorage.setItem(LOCAL_STORAGE_KEYS.searchTerm, searchTerm);
+    localStorage.setItem(
+      LOCAL_STORAGE_KEYS.lastResults,
+      JSON.stringify(results)
+    );
     this.setState({ searchResults: results, searchTerm });
+  }
+
+  private handleEmptySubmit() {
+    this.setState({
+      searchTerm: null,
+      searchResults: initialResults,
+    });
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.searchTerm);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.lastResults);
+  }
+
+  private getCachedResults(): CategoryUnitWithDescription[] | null {
+    const json = localStorage.getItem(LOCAL_STORAGE_KEYS.lastResults);
+    if (!json) return null;
+
+    const parsed = JSON.parse(json);
+    if (!Array.isArray(parsed)) throw new Error('Cached results is not array');
+
+    return parsed;
   }
 
   render() {
