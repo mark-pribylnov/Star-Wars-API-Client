@@ -24,42 +24,61 @@ type AppState = {
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
 
+  private searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
+
   constructor(props: Record<string, never>) {
     super(props);
     this.api = new ApiService();
     this.state = {
       data: [],
       searchResults: [],
-      searchTerm: localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm),
+      searchTerm: this.searchTerm,
     };
+  }
+
+  private getInitialResults(data: DataWithDescription[]) {
+    return data.map((group) => group.entries[0]);
   }
 
   async componentDidMount() {
     const data = await this.api.getAllData();
-    this.setState({ data });
+    const initialResults = this.getInitialResults(data);
 
-    this.search(this.state.searchTerm ?? null);
+    this.setState({ data, searchResults: initialResults });
+    this.search(this.searchTerm);
   }
 
   search = async (searchTerm: string | null): Promise<void> => {
-    if (!searchTerm && searchTerm !== '') {
-      this.setState({ searchTerm });
+    const trimmedTerm = searchTerm?.trim();
+
+    if (!trimmedTerm) {
+      this.setState({
+        searchTerm: null,
+        searchResults: this.getInitialResults(this.state.data),
+      });
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.searchTerm);
       return;
     }
 
-    const data = this.state.data;
     const searchResults: CategoryUnitWithDescription[] = [];
 
-    data.forEach((group) => {
+    this.state.data.forEach((group) => {
       group.entries.forEach((entry) => {
-        if (entry.name.toLowerCase().includes(searchTerm.toLowerCase().trim()))
+        if (entry.name.toLowerCase().includes(trimmedTerm.toLowerCase()))
           searchResults.push(entry);
       });
     });
 
-    localStorage.setItem(LOCAL_STORAGE_KEYS.searchTerm, searchTerm);
-    this.setState({ searchResults, searchTerm });
+    this.saveSearchResults(searchResults, trimmedTerm);
   };
+
+  private saveSearchResults(
+    results: CategoryUnitWithDescription[],
+    searchTerm: string
+  ) {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.searchTerm, searchTerm);
+    this.setState({ searchResults: results, searchTerm });
+  }
 
   render() {
     return (
