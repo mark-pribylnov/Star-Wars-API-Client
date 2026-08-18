@@ -15,6 +15,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     const { searchResults, searchTerm } = this.props;
 
     const resultsNumber = searchResults.length;
+    const hasResults = resultsNumber > 0;
 
     const tableRows = searchResults.map((item) => {
       return (
@@ -33,7 +34,6 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
         </tr>
       );
     });
-    // write a helper for checking for searchResults in JSX because it looks ugly writing the same condition many times
     // fix the situation when the searchTerm is null. now the app crashed with the Error I created
 
     return (
@@ -41,24 +41,15 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
         <h2
           className={clsx(
             styles['search-heading'],
-            resultsNumber <= 0 && styles['search-heading--no-results']
+            !hasResults && styles['search-heading--no-results']
           )}
         >
-          {resultsNumber > 0 ? 'Search results' : 'No results found'}
-          {resultsNumber > 0 && (
+          {hasResults ? 'Search results' : 'No results found'}
+          {hasResults && (
             <span className={styles['results-number']}>{resultsNumber}</span>
           )}
         </h2>
-        {resultsNumber <= 0 && (
-          <p className={styles['no-results-description']}>
-            We couldn&apos;t find any matches for&nbsp;
-            <span className={styles['no-results-description__search-term']}>
-              {searchTerm}
-            </span>
-          </p>
-        )}
-        {resultsNumber <= 0 && <NoResultsVisual searchTerm={searchTerm} />}
-        {resultsNumber > 0 && (
+        {hasResults ? (
           <table className={styles['table']}>
             <thead>
               <tr>
@@ -68,6 +59,16 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
             </thead>
             <tbody>{tableRows}</tbody>
           </table>
+        ) : (
+          <>
+            <p className={styles['no-results-description']}>
+              We couldn&apos;t find any matches for&nbsp;
+              <span className={styles['no-results-description__search-term']}>
+                {searchTerm}
+              </span>
+            </p>
+            <NoResultsVisual searchTerm={searchTerm} />
+          </>
         )}
       </div>
     );
