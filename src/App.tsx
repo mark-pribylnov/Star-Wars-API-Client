@@ -15,12 +15,13 @@ import {
   type DataWithDescription,
 } from './types/base';
 import ApiService from './services/api';
-import { initialResults } from './data/initialResults';
+import { unpackData } from './utils/utils';
 
 type AppState = {
   data: DataWithDescription[];
   searchResults: CategoryUnitWithDescription[];
   searchTerm: string | null;
+  // isLoading: boolean;
 };
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
@@ -29,18 +30,31 @@ export default class App extends Component<Record<string, never>, AppState> {
     super(props);
 
     const searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
+    const cachedResults = this.getCachedResults();
 
     this.api = new ApiService();
     this.state = {
       data: [],
-      searchResults: this.getCachedResults() ?? initialResults,
+      searchResults: cachedResults ?? [],
       searchTerm,
+      // isLoading: Boolean(cachedResults),
     };
   }
+  // TODO: REMOVE state.DATA AND REPLACE WITH DATA UNPACKED IN THE STATE
 
   async componentDidMount() {
     const data = await this.api.getAllData();
-    this.setState({ data });
+    const dataUnpacked = unpackData(data);
+    const hasCachedResults = this.getCachedResults() !== null;
+
+    // const newState = { data, isLoading: false };
+    const newState = { data };
+
+    if (hasCachedResults) {
+      this.setState(newState);
+    } else {
+      this.setState({ ...newState, searchResults: dataUnpacked });
+    }
   }
 
   search = async (searchTerm: string | null): Promise<void> => {
@@ -78,7 +92,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   private handleEmptySubmit() {
     this.setState({
       searchTerm: null,
-      searchResults: initialResults,
+      searchResults: unpackData(this.state.data),
     });
     localStorage.removeItem(LOCAL_STORAGE_KEYS.searchTerm);
     localStorage.removeItem(LOCAL_STORAGE_KEYS.lastResults);
@@ -102,6 +116,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         <ResultsSection
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}
+          // isLoading={this.state.isLoading}
         />
       </div>
     );

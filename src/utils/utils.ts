@@ -44,3 +44,7 @@ export function addDescriptionToData(
   });
   return withDescription;
 }
+
+export function unpackData(data: DataWithDescription[]) {
+  return data.map((group) => group.entries).flat();
+}

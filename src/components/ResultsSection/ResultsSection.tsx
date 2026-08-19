@@ -8,11 +8,13 @@ import clsx from 'clsx';
 type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[];
   searchTerm: string | null;
+  // isLoading: boolean;
 };
 
 export default class ResultsSection extends Component<ResultsSectionProps> {
   render() {
     const { searchResults, searchTerm } = this.props;
+    // const { searchResults, searchTerm, isLoading } = this.props;
 
     const resultsNumber = searchResults.length;
     const hasResults = resultsNumber > 0;
@@ -48,6 +50,8 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
             <span className={styles['results-number']}>{resultsNumber}</span>
           )}
         </h2>
+
+        {/* {hasResults || !isLoading ? ( */}
         {hasResults ? (
           <table className={styles['table']}>
             <thead>
