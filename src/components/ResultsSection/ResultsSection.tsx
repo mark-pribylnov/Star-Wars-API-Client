@@ -1,58 +1,113 @@
-import { Component } from 'react';
+import { Component, type ReactNode } from 'react';
 import styles from './ResultsSection.module.scss';
 import type { CategoryUnitWithDescription } from '../../types/base';
 import { getItemImageURL } from '../../utils/imageURL';
 import NoResultsVisual from '../NoResultsVisual/NoResultsVisual';
 import clsx from 'clsx';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[];
   searchTerm: string | null;
-  // isLoading: boolean;
+  isLoading: boolean;
 };
 
-export default class ResultsSection extends Component<ResultsSectionProps> {
-  render() {
-    const { searchResults, searchTerm } = this.props;
-    // const { searchResults, searchTerm, isLoading } = this.props;
+type Data = { data: CategoryUnitWithDescription[] };
+type Rows = { rows: number };
 
+const skeletonProps = {
+  baseColor: '#1f2937',
+  highlightColor: '#2a3c51',
+  enableAnimation: true,
+} as const;
+
+export default class ResultsSection extends Component<ResultsSectionProps> {
+  private renderRow(
+    key: string | number,
+    name: ReactNode,
+    description: ReactNode
+  ) {
+    return (
+      <tr key={key}>
+        <th>
+          <span className={styles['name-wrapper']}>{name}</span>
+        </th>
+        <td>{description}</td>
+      </tr>
+    );
+  }
+
+  private createTableRows(params: Data | Rows) {
+    if ('data' in params) {
+      return params.data.map((item) =>
+        this.renderRow(
+          item.name,
+          <>
+            <img
+              className={styles['item-img']}
+              src={getItemImageURL(item.name)}
+              alt={item.name}
+            />
+            {item.name}
+          </>,
+          item.description
+        )
+      );
+    }
+
+    return Array.from({ length: params.rows }, (_, index) =>
+      this.renderRow(
+        index,
+        <>
+          <Skeleton width={35} height={35} {...skeletonProps} />
+          <Skeleton width={140} {...skeletonProps} />
+        </>,
+        <Skeleton width="90%" {...skeletonProps} />
+      )
+    );
+  }
+
+  private createHeading(
+    isLoading: boolean,
+    hasResults: boolean,
+    resultsNumber: number
+  ) {
+    let text = null;
+
+    if (isLoading) {
+      text = 'Loading results...';
+    } else if (hasResults) {
+      text = 'Search results';
+    } else {
+      text = 'No results found';
+    }
+
+    return (
+      <h2
+        className={clsx(
+          styles['search-heading'],
+          !hasResults && !isLoading && styles['search-heading--no-results']
+        )}
+      >
+        {text}
+        {hasResults && (
+          <span className={styles['results-number']}>{resultsNumber}</span>
+        )}
+      </h2>
+    );
+  }
+
+  render() {
+    const { searchResults, searchTerm, isLoading } = this.props;
     const resultsNumber = searchResults.length;
     const hasResults = resultsNumber > 0;
 
-    const tableRows = searchResults.map((item) => {
-      return (
-        <tr key={item.name}>
-          <th>
-            <span className={styles['name-wrapper']}>
-              <img
-                className={styles['item-img']}
-                src={getItemImageURL(item.name)}
-                alt={item.name}
-              />
-              {item.name}
-            </span>
-          </th>
-          <td>{item.description}</td>
-        </tr>
-      );
-    });
-
     return (
       <div className={styles.root}>
-        <h2
-          className={clsx(
-            styles['search-heading'],
-            !hasResults && styles['search-heading--no-results']
-          )}
-        >
-          {hasResults ? 'Search results' : 'No results found'}
-          {hasResults && (
-            <span className={styles['results-number']}>{resultsNumber}</span>
-          )}
-        </h2>
+        {this.createHeading(isLoading, hasResults, resultsNumber)}
 
-        {/* {hasResults || !isLoading ? ( */}
-        {hasResults ? (
+        {hasResults || isLoading ? (
           <table className={styles['table']}>
             <thead>
               <tr>
@@ -60,7 +115,11 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
                 <th>Description</th>
               </tr>
             </thead>
-            <tbody>{tableRows}</tbody>
+            <tbody>
+              {this.createTableRows(
+                isLoading ? { rows: 10 } : { data: searchResults }
+              )}
+            </tbody>
           </table>
         ) : (
           <>

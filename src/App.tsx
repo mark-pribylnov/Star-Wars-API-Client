@@ -1,8 +1,9 @@
 // TODO: migrate CSS to Tailwind
 // TODO: handle errors in ApiService from the API
 // TODO: in types 'additional property: false' is duplicated in each file
-// TODO: show HTTP error to the user, not console
+// TODO: show HTTP error to the user, not console (find toaster library)
 // TODO: in the end of the project check whether <RebelAllianceIcon/> is used. if not - delete
+// TODO: APPLY SINGLETON FOR validator because it's possible to create its instance twice
 
 import { Component } from 'react';
 import styles from './App.module.scss';
@@ -15,13 +16,13 @@ import {
   type DataWithDescription,
 } from './types/base';
 import ApiService from './services/api';
-import { unpackData } from './utils/utils';
+import { pause, unpackData } from './utils/utils';
 
 type AppState = {
   data: DataWithDescription[];
   searchResults: CategoryUnitWithDescription[];
   searchTerm: string | null;
-  // isLoading: boolean;
+  isLoading: boolean;
 };
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
@@ -37,18 +38,21 @@ export default class App extends Component<Record<string, never>, AppState> {
       data: [],
       searchResults: cachedResults ?? [],
       searchTerm,
-      // isLoading: Boolean(cachedResults),
+      isLoading: !cachedResults,
     };
   }
   // TODO: REMOVE state.DATA AND REPLACE WITH DATA UNPACKED IN THE STATE
+  // TODO: DISABLE SEARCH INPUT WHILE isLoading
+  // TODO: make name and description table heads not jump when switching between loading state and with results
 
   async componentDidMount() {
     const data = await this.api.getAllData();
     const dataUnpacked = unpackData(data);
     const hasCachedResults = this.getCachedResults() !== null;
 
-    // const newState = { data, isLoading: false };
-    const newState = { data };
+    const newState = { data, isLoading: false };
+
+    await pause(1000);
 
     if (hasCachedResults) {
       this.setState(newState);
@@ -116,7 +120,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         <ResultsSection
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}
-          // isLoading={this.state.isLoading}
+          isLoading={this.state.isLoading}
         />
       </div>
     );

@@ -48,3 +48,7 @@ export function addDescriptionToData(
 export function unpackData(data: DataWithDescription[]) {
   return data.map((group) => group.entries).flat();
 }
+
+export function pause(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
