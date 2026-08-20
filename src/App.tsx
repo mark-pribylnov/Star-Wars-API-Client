@@ -50,7 +50,6 @@ export default class App extends Component<Record<string, never>, AppState> {
       hasCachedData: Boolean(allDataCached),
     };
   }
-  // TODO: DISABLE SEARCH INPUT WHILE isLoading
 
   async componentDidMount() {
     let data = null;
@@ -145,7 +144,7 @@ export default class App extends Component<Record<string, never>, AppState> {
     return (
       <div className={styles['app-wrapper']}>
         <Header />
-        <SearchSection search={this.search} />
+        <SearchSection search={this.search} isLoading={this.state.isLoading} />
         <ResultsSection
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}

@@ -5,6 +5,7 @@ import type { CategoryUnit } from '../../types/base';
 
 type SearchSectionProps = {
   search: (searchTerm: string) => Promise<void | CategoryUnit[]>;
+  isLoading: boolean;
 };
 
 export default class SearchSection extends Component<SearchSectionProps> {
@@ -17,6 +18,7 @@ export default class SearchSection extends Component<SearchSectionProps> {
 
   private handleSubmit = (e: SubmitEvent) => {
     e.preventDefault();
+    if (this.props.isLoading) return;
 
     if (!(e.currentTarget instanceof HTMLFormElement))
       throw new Error('e.currentTarget is not HTMLFormElement');
@@ -48,8 +50,13 @@ export default class SearchSection extends Component<SearchSectionProps> {
             className={styles['search-input']}
             placeholder="Type to search..."
             defaultValue={this.initialSearchTerm ?? ''}
+            disabled={this.props.isLoading}
           />
-          <button type="submit" className={styles['search-button']}>
+          <button
+            type="submit"
+            className={styles['search-button']}
+            disabled={this.props.isLoading}
+          >
             Search
           </button>
         </form>
