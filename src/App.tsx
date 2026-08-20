@@ -13,17 +13,24 @@ import { Header } from './components/Header/Header';
 import {
   LOCAL_STORAGE_KEYS,
   type CategoryUnitWithDescription,
-  type DataWithDescription,
 } from './types/base';
 import ApiService from './services/api';
-import { pause, unpackData } from './utils/utils';
+import { unpackData } from './utils/utils';
 
 type AppState = {
-  data: DataWithDescription[];
+  data: CategoryUnitWithDescription[];
   searchResults: CategoryUnitWithDescription[];
   searchTerm: string | null;
   isLoading: boolean;
+  hasCachedResults: boolean;
+  hasCachedData: boolean;
 };
+
+type CachedData = {
+  allDataCached: CategoryUnitWithDescription[] | null;
+  resultsCached: CategoryUnitWithDescription[] | null;
+};
+
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
 
@@ -31,33 +38,40 @@ export default class App extends Component<Record<string, never>, AppState> {
     super(props);
 
     const searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
-    const cachedResults = this.getCachedResults();
+    const { allDataCached, resultsCached } = this.getCachedData();
 
     this.api = new ApiService();
     this.state = {
-      data: [],
-      searchResults: cachedResults ?? [],
+      data: allDataCached ?? [],
+      searchResults: resultsCached ?? allDataCached ?? [],
       searchTerm,
-      isLoading: !cachedResults,
+      isLoading: !allDataCached,
+      hasCachedResults: Boolean(resultsCached),
+      hasCachedData: Boolean(allDataCached),
     };
   }
-  // TODO: REMOVE state.DATA AND REPLACE WITH DATA UNPACKED IN THE STATE
   // TODO: DISABLE SEARCH INPUT WHILE isLoading
-  // TODO: make name and description table heads not jump when switching between loading state and with results
 
   async componentDidMount() {
-    const data = await this.api.getAllData();
-    const dataUnpacked = unpackData(data);
-    const hasCachedResults = this.getCachedResults() !== null;
+    let data = null;
 
-    const newState = { data, isLoading: false };
+    if (this.state.hasCachedData) {
+      data = this.state.data;
+    } else {
+      data = unpackData(await this.api.getAllData());
 
-    await pause(1000);
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.allDataCached,
+        JSON.stringify(data)
+      );
+    }
 
-    if (hasCachedResults) {
+    const newState = { data, isLoading: false, hasCachedData: true };
+
+    if (this.state.hasCachedResults) {
       this.setState(newState);
     } else {
-      this.setState({ ...newState, searchResults: dataUnpacked });
+      this.setState({ ...newState, searchResults: data });
     }
   }
 
@@ -71,11 +85,9 @@ export default class App extends Component<Record<string, never>, AppState> {
 
     const searchResults: CategoryUnitWithDescription[] = [];
 
-    this.state.data.forEach((group) => {
-      group.entries.forEach((entry) => {
-        if (entry.name.toLowerCase().includes(trimmedTerm.toLowerCase()))
-          searchResults.push(entry);
-      });
+    this.state.data.forEach((item) => {
+      if (item.name.toLowerCase().includes(trimmedTerm.toLowerCase()))
+        searchResults.push(item);
     });
 
     this.saveSearchResults(searchResults, trimmedTerm);
@@ -87,7 +99,7 @@ export default class App extends Component<Record<string, never>, AppState> {
   ) {
     localStorage.setItem(LOCAL_STORAGE_KEYS.searchTerm, searchTerm);
     localStorage.setItem(
-      LOCAL_STORAGE_KEYS.lastResults,
+      LOCAL_STORAGE_KEYS.lastResultsCached,
       JSON.stringify(results)
     );
     this.setState({ searchResults: results, searchTerm });
@@ -96,20 +108,37 @@ export default class App extends Component<Record<string, never>, AppState> {
   private handleEmptySubmit() {
     this.setState({
       searchTerm: null,
-      searchResults: unpackData(this.state.data),
+      searchResults: this.state.data,
     });
     localStorage.removeItem(LOCAL_STORAGE_KEYS.searchTerm);
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.lastResults);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.lastResultsCached);
   }
 
-  private getCachedResults(): CategoryUnitWithDescription[] | null {
-    const json = localStorage.getItem(LOCAL_STORAGE_KEYS.lastResults);
-    if (!json) return null;
+  private getCachedData(): CachedData {
+    const allDataCached = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.allDataCached
+    );
+    const resultsCached = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.lastResultsCached
+    );
 
-    const parsed = JSON.parse(json);
-    if (!Array.isArray(parsed)) throw new Error('Cached results is not array');
+    const raw = {
+      allDataCached,
+      resultsCached,
+    };
 
-    return parsed;
+    const parsed = Object.entries(raw).map(([propertyName, arrayOfItems]) => {
+      const objectEntries = [propertyName];
+      const parsedArrayOfItems = arrayOfItems ? JSON.parse(arrayOfItems) : null;
+
+      if (parsedArrayOfItems && !Array.isArray(parsedArrayOfItems))
+        throw new Error(`Array is expected.`);
+
+      objectEntries.push(parsedArrayOfItems);
+      return objectEntries;
+    });
+
+    return Object.fromEntries(parsed);
   }
 
   render() {

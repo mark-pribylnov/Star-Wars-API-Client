@@ -16,7 +16,8 @@ export const CATEGORIES = {
 
 export const LOCAL_STORAGE_KEYS = {
   searchTerm: 'searchTerm',
-  lastResults: 'lastResults',
+  lastResultsCached: 'lastResults',
+  allDataCached: 'allDataCached',
 } as const;
 
 export type CategoryUnit =
