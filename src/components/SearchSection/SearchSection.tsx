@@ -6,6 +6,7 @@ import type { CategoryUnit } from '../../types/base';
 type SearchSectionProps = {
   search: (searchTerm: string) => Promise<void | CategoryUnit[]>;
   isLoading: boolean;
+  isFailedToLoadData: boolean;
 };
 
 export default class SearchSection extends Component<SearchSectionProps> {
@@ -50,12 +51,12 @@ export default class SearchSection extends Component<SearchSectionProps> {
             className={styles['search-input']}
             placeholder="Type to search..."
             defaultValue={this.initialSearchTerm ?? ''}
-            disabled={this.props.isLoading}
+            disabled={this.props.isLoading || this.props.isFailedToLoadData}
           />
           <button
             type="submit"
             className={styles['search-button']}
-            disabled={this.props.isLoading}
+            disabled={this.props.isLoading || this.props.isFailedToLoadData}
           >
             Search
           </button>

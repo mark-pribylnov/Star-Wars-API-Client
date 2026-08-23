@@ -4,8 +4,11 @@
 // TODO: show HTTP error to the user, not console (find toaster library)
 // TODO: in the end of the project check whether <RebelAllianceIcon/> is used. if not - delete
 // TODO: APPLY SINGLETON FOR validator because it's possible to create its instance twice
+// TODO: handle validation crash if API returns junk
+// TODO: handle network loss
+// TODO: refactor creating rows
 
-import { Component } from 'react';
+import { Component, type ReactNode } from 'react';
 import styles from './App.module.scss';
 import SearchSection from './components/SearchSection/SearchSection';
 import ResultsSection from './components/ResultsSection/ResultsSection';
@@ -13,13 +16,15 @@ import { Header } from './components/Header/Header';
 import {
   LOCAL_STORAGE_KEYS,
   type CategoryUnitWithDescription,
+  type ToastType,
 } from './types/base';
 import ApiService from './services/api';
 import { unpackData } from './utils/utils';
+import { ToastContainer, toast } from 'react-toastify';
 
 type AppState = {
-  data: CategoryUnitWithDescription[];
-  searchResults: CategoryUnitWithDescription[];
+  data: CategoryUnitWithDescription[] | null;
+  searchResults: CategoryUnitWithDescription[] | null;
   searchTerm: string | null;
   isLoading: boolean;
   hasCachedResults: boolean;
@@ -34,13 +39,16 @@ type CachedData = {
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
 
+  private notify = (message: ReactNode, type: ToastType) =>
+    toast(message, { type });
+
   constructor(props: Record<string, never>) {
     super(props);
 
     const searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
     const { allDataCached, resultsCached } = this.getCachedData();
 
-    this.api = new ApiService();
+    this.api = new ApiService(this.notify);
     this.state = {
       data: allDataCached ?? [],
       searchResults: resultsCached ?? allDataCached ?? [],
@@ -57,7 +65,8 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.hasCachedData) {
       data = this.state.data;
     } else {
-      data = unpackData(await this.api.getAllData());
+      const packedData = await this.api.getAllData();
+      if (packedData) data = unpackData(packedData);
 
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.allDataCached,
@@ -84,10 +93,11 @@ export default class App extends Component<Record<string, never>, AppState> {
 
     const searchResults: CategoryUnitWithDescription[] = [];
 
-    this.state.data.forEach((item) => {
-      if (item.name.toLowerCase().includes(trimmedTerm.toLowerCase()))
-        searchResults.push(item);
-    });
+    if (this.state.data)
+      this.state.data.forEach((item) => {
+        if (item.name.toLowerCase().includes(trimmedTerm.toLowerCase()))
+          searchResults.push(item);
+      });
 
     this.saveSearchResults(searchResults, trimmedTerm);
   };
@@ -144,12 +154,17 @@ export default class App extends Component<Record<string, never>, AppState> {
     return (
       <div className={styles['app-wrapper']}>
         <Header />
-        <SearchSection search={this.search} isLoading={this.state.isLoading} />
+        <SearchSection
+          search={this.search}
+          isLoading={this.state.isLoading}
+          isFailedToLoadData={!this.state.data}
+        />
         <ResultsSection
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}
           isLoading={this.state.isLoading}
         />
+        <ToastContainer position="bottom-right" />
       </div>
     );
   }

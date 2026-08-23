@@ -79,3 +79,5 @@ export type DataWithDescription =
       category: typeof CATEGORIES.films;
       entries: WithDescription<FilmRefined>[];
     };
+
+export type ToastType = 'info' | 'success' | 'warning' | 'error';

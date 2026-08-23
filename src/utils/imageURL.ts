@@ -1,6 +1,6 @@
 import { speciesImageUrls } from '../data/speciesImageUrls';
 
-// Slash is not allowed in a windoes filename
+// Slash is not allowed in a windows filename
 export function replaceSlashWithDash(name: string): string {
   return name.replaceAll('/', '-');
 }
