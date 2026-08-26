@@ -7,6 +7,10 @@
 // TODO: handle validation crash if API returns junk
 // TODO: handle network loss
 // TODO: refactor creating rows
+// TODO: replace empty array [] with null when initializing state
+// TODO: use https://github.com/bvaughn/react-error-boundary instead of your own ErrorBoundary (link from the docs)
+// TODO: REFACTOR move APP to components/base
+// TODO: combine styles for 'search' and 'restore app' buttons into one file. Make something like button.scss
 
 import { Component, type ReactNode } from 'react';
 import styles from './App.module.scss';
@@ -29,6 +33,7 @@ type AppState = {
   isLoading: boolean;
   hasCachedResults: boolean;
   hasCachedData: boolean;
+  errorSimulated: boolean;
 };
 
 type CachedData = {
@@ -56,6 +61,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       isLoading: !allDataCached,
       hasCachedResults: Boolean(resultsCached),
       hasCachedData: Boolean(allDataCached),
+      errorSimulated: false,
     };
   }
 
@@ -150,7 +156,14 @@ export default class App extends Component<Record<string, never>, AppState> {
     return Object.fromEntries(parsed);
   }
 
+  private simulateError = () => {
+    this.setState({ errorSimulated: true });
+  };
+
   render() {
+    if (this.state.errorSimulated)
+      throw new Error('Artificial crash. Testing Error Boundary.');
+
     return (
       <div className={styles['app-wrapper']}>
         <Header />
@@ -165,6 +178,13 @@ export default class App extends Component<Record<string, never>, AppState> {
           isLoading={this.state.isLoading}
         />
         <ToastContainer position="bottom-right" />
+        <button
+          type="button"
+          className={styles['simulate-error-button']}
+          onClick={this.simulateError}
+        >
+          Simulate error
+        </button>
       </div>
     );
   }
