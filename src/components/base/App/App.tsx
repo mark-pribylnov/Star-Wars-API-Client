@@ -90,7 +90,9 @@ export default class App extends Component<Record<string, never>, AppState> {
   }
 
   search = async (searchTerm: string | null): Promise<void> => {
-    const trimmedTerm = searchTerm?.trim();
+    const trimmedTerm = searchTerm?.trim() || null;
+
+    if (trimmedTerm === this.state.searchTerm) return;
 
     if (!trimmedTerm) {
       this.handleEmptySubmit();
