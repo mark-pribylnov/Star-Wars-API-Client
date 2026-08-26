@@ -1,16 +1,19 @@
-import { Component } from 'react';
+import { Component, type ReactNode } from 'react';
 import styles from './ErrorBoundary.module.scss';
-import App from '../App/App';
+
+type ErrorBoundaryProps = {
+  children: ReactNode;
+};
 
 type ErrorBoundaryState = {
   hasError: boolean;
 };
 
 export class ErrorBoundary extends Component<
-  Record<string, never>,
+  ErrorBoundaryProps,
   ErrorBoundaryState
 > {
-  constructor(props: Record<string, never>) {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }
@@ -39,6 +42,6 @@ export class ErrorBoundary extends Component<
       );
     }
 
-    return <App />;
+    return this.props.children;
   }
 }

@@ -14,16 +14,16 @@
 
 import { Component, type ReactNode } from 'react';
 import styles from './App.module.scss';
-import SearchSection from '../../SearchSection/SearchSection';
-import ResultsSection from '../../ResultsSection/ResultsSection';
-import { Header } from '../../Header/Header';
+import SearchSection from './components/SearchSection/SearchSection';
+import ResultsSection from './components/ResultsSection/ResultsSection';
+import { Header } from './components/Header/Header';
 import {
   LOCAL_STORAGE_KEYS,
   type CategoryUnitWithDescription,
   type ToastType,
-} from '../../../types/base';
-import ApiService from '../../../services/api';
-import { unpackData } from '../../../utils/utils';
+} from './types/base';
+import ApiService from './services/api';
+import { unpackData } from './utils/utils';
 import { ToastContainer, toast } from 'react-toastify';
 
 type AppState = {
