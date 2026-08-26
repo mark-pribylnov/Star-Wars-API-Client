@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import styles from './ErrorBoundary.module.scss';
-import App from '../../App';
+import App from '../App/App';
 
 type ErrorBoundaryState = {
   hasError: boolean;
