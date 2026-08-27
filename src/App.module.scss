@@ -1,8 +1,8 @@
 @use './styles/shared' as *;
 
 body {
-  color: white;
   margin: 0;
+  scrollbar-gutter: stable;
   font-family: sans-serif;
 }
 

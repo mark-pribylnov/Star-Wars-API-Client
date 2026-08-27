@@ -60,3 +60,10 @@ export function getNotOkResponseMessage(response: Response): ReactNode {
       );
   }
 }
+
+export function getRetryFailedMessage(): ReactNode {
+  return formatErrorMessage(
+    "Still couldn't load data",
+    "The retry didn't work. Something went wrong — please try again later."
+  );
+}

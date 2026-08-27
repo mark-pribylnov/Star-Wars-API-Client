@@ -3,6 +3,7 @@ import styles from './ResultsSection.module.scss';
 import type { CategoryUnitWithDescription } from '../../types/base';
 import { getItemImageURL } from '../../utils/imageURL';
 import NoResultsVisual from '../NoResultsVisual/NoResultsVisual';
+import FailedLoadVisual from '../FailedLoadVisual/FailedLoadVisual';
 import clsx from 'clsx';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -11,6 +12,7 @@ type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[] | null;
   searchTerm: string | null;
   isLoading: boolean;
+  onRetryLoadData: () => void;
 };
 
 type ViewData =
@@ -135,7 +137,12 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
           searchResults: viewData.searchResults,
         });
       case 'failed-load-data':
-        return <h2>Failed to load data</h2>;
+        return (
+          <FailedLoadVisual
+            onRetryLoadData={this.props.onRetryLoadData}
+            isLoading={isLoading}
+          />
+        );
       case 'no-results':
         return (
           <>

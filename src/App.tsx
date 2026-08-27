@@ -17,6 +17,7 @@ import {
 } from './types/base';
 import ApiService from './services/api';
 import { unpackData } from './utils/utils';
+import { getRetryFailedMessage } from './utils/responseMessage';
 import { ToastContainer, toast } from 'react-toastify';
 
 type AppState = {
@@ -36,9 +37,28 @@ type CachedData = {
 
 export default class App extends Component<Record<string, never>, AppState> {
   private readonly api: ApiService;
+  private readonly retryFailedToastId = 'retry-failed';
 
   private notify = (message: ReactNode, type: ToastType) =>
     toast(message, { type });
+
+  private notifyRetryFailed = () => {
+    const message = getRetryFailedMessage();
+
+    if (toast.isActive(this.retryFailedToastId)) {
+      toast.update(this.retryFailedToastId, {
+        render: message,
+        type: 'error',
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    toast(message, {
+      type: 'error',
+      toastId: this.retryFailedToastId,
+    });
+  };
 
   constructor(props: Record<string, never>) {
     super(props);
@@ -151,6 +171,31 @@ export default class App extends Component<Record<string, never>, AppState> {
     return Object.fromEntries(parsed);
   }
 
+  private retryLoadData = async () => {
+    this.setState({ isLoading: true });
+
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.allDataCached);
+
+    const packedData = await this.api.getAllData();
+    const data = packedData ? unpackData(packedData) : null;
+
+    if (data) {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.allDataCached,
+        JSON.stringify(data)
+      );
+    } else {
+      this.notifyRetryFailed();
+    }
+
+    this.setState({
+      data,
+      searchResults: data,
+      isLoading: false,
+      hasCachedData: Boolean(data),
+    });
+  };
+
   private simulateError = () => {
     this.setState({ errorSimulated: true });
   };
@@ -171,6 +216,7 @@ export default class App extends Component<Record<string, never>, AppState> {
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}
           isLoading={this.state.isLoading}
+          onRetryLoadData={this.retryLoadData}
         />
         <ToastContainer position="bottom-right" />
         <button
