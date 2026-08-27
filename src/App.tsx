@@ -12,6 +12,7 @@ import ResultsSection from './components/ResultsSection/ResultsSection';
 import { Header } from './components/Header/Header';
 import {
   LOCAL_STORAGE_KEYS,
+  SESSION_STORAGE_KEYS,
   type CategoryUnitWithDescription,
   type LoadErrorReason,
   type ToastType,
@@ -67,23 +68,25 @@ export default class App extends Component<Record<string, never>, AppState> {
 
     const searchTerm = localStorage.getItem(LOCAL_STORAGE_KEYS.searchTerm);
     const { allDataCached, resultsCached } = this.getCachedData();
+    const loadError = allDataCached ? null : this.getLoadError();
 
     this.api = new ApiService(this.notify);
     this.state = {
       data: allDataCached,
       searchResults: resultsCached ?? allDataCached,
       searchTerm,
-      isLoading: !allDataCached,
+      isLoading: !allDataCached && !loadError,
       hasCachedResults: Boolean(resultsCached),
       hasCachedData: Boolean(allDataCached),
-      loadError: null,
+      loadError,
       errorSimulated: false,
     };
   }
 
   async componentDidMount() {
     if (this.state.hasCachedData) {
-      this.setState({ isLoading: false });
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.loadError);
+      this.setState({ isLoading: false, loadError: null });
       return;
     }
 
@@ -95,6 +98,9 @@ export default class App extends Component<Record<string, never>, AppState> {
         LOCAL_STORAGE_KEYS.allDataCached,
         JSON.stringify(data)
       );
+
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.loadError);
+
       this.setState({
         data,
         searchResults: data,
@@ -104,6 +110,8 @@ export default class App extends Component<Record<string, never>, AppState> {
       });
       return;
     }
+
+    sessionStorage.setItem(SESSION_STORAGE_KEYS.loadError, result.reason);
 
     this.setState({
       data: null,
@@ -183,6 +191,12 @@ export default class App extends Component<Record<string, never>, AppState> {
     return Object.fromEntries(parsed);
   }
 
+  private getLoadError(): LoadErrorReason | null {
+    const stored = sessionStorage.getItem(SESSION_STORAGE_KEYS.loadError);
+    if (stored === 'fetch' || stored === 'schema') return stored;
+    return null;
+  }
+
   private retryLoadData = async () => {
     this.setState({ isLoading: true });
 
@@ -196,6 +210,7 @@ export default class App extends Component<Record<string, never>, AppState> {
         LOCAL_STORAGE_KEYS.allDataCached,
         JSON.stringify(data)
       );
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.loadError);
       this.setState({
         data,
         searchResults: data,
@@ -210,6 +225,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       this.notifyRetryFailed();
     }
 
+    sessionStorage.setItem(SESSION_STORAGE_KEYS.loadError, result.reason);
     this.setState({
       data: null,
       searchResults: null,

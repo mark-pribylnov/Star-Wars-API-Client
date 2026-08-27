@@ -20,6 +20,10 @@ export const LOCAL_STORAGE_KEYS = {
   allDataCached: 'allDataCached',
 } as const;
 
+export const SESSION_STORAGE_KEYS = {
+  loadError: 'loadError',
+} as const;
+
 export type CategoryUnit =
   | Character
   | FilmRefined

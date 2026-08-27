@@ -189,13 +189,13 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
   render() {
     const viewData = this.pickView();
 
-    if (viewData.view === 'initial-loading') return null;
-
     const { searchResults, isLoading } = this.props;
     const resultsNumber = searchResults ? searchResults.length : null;
     const hasResults = resultsNumber ? resultsNumber > 0 : false;
     const hideHeading =
-      viewData.view === 'failed-load-data' || viewData.view === 'outdated-app';
+      viewData.view === 'failed-load-data' ||
+      viewData.view === 'outdated-app' ||
+      viewData.view === 'initial-loading';
 
     return (
       <div className={styles.root}>
