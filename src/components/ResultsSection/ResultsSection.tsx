@@ -13,9 +13,6 @@ type ResultsSectionProps = {
   isLoading: boolean;
 };
 
-type Data = { data: CategoryUnitWithDescription[] };
-type Rows = { rows: number };
-
 type View =
   | 'loading'
   | 'has-results'
@@ -36,51 +33,6 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
   }) {
     const { isLoading, searchResults } = params;
 
-    function createTableRows(params: Data | Rows) {
-      function createSingleRow(
-        key: string | number,
-        name: ReactNode,
-        description: ReactNode
-      ) {
-        return (
-          <tr key={key}>
-            <th>
-              <span className={styles['name-wrapper']}>{name}</span>
-            </th>
-            <td>{description}</td>
-          </tr>
-        );
-      }
-
-      if ('data' in params) {
-        return params.data.map((item) =>
-          createSingleRow(
-            item.name,
-            <>
-              <img
-                className={styles['item-img']}
-                src={getItemImageURL(item.name)}
-                alt={item.name}
-              />
-              {item.name}
-            </>,
-            item.description
-          )
-        );
-      }
-
-      return Array.from({ length: params.rows }, (_, index) =>
-        createSingleRow(
-          index,
-          <>
-            <Skeleton width={35} height={35} {...skeletonProps} />
-            <Skeleton width={140} {...skeletonProps} />
-          </>,
-          <Skeleton width="90%" {...skeletonProps} />
-        )
-      );
-    }
-
     return (
       <table className={styles['table']}>
         <thead>
@@ -90,9 +42,56 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
           </tr>
         </thead>
         <tbody>
-          {createTableRows(isLoading ? { rows: 10 } : { data: searchResults })}
+          {isLoading
+            ? this.createSkeletonRows(10)
+            : this.createDataRows(searchResults)}
         </tbody>
       </table>
+    );
+  }
+
+  private createDataRows(data: CategoryUnitWithDescription[]) {
+    return data.map((item) =>
+      this.createSingleRow(
+        item.name,
+        <>
+          <img
+            className={styles['item-img']}
+            src={getItemImageURL(item.name)}
+            alt={item.name}
+          />
+          {item.name}
+        </>,
+        item.description
+      )
+    );
+  }
+
+  private createSingleRow(
+    key: string | number,
+    name: ReactNode,
+    description: ReactNode
+  ) {
+    return (
+      <tr key={key}>
+        <th>
+          <span className={styles['name-wrapper']}>{name}</span>
+        </th>
+        <td>{description}</td>
+      </tr>
+    );
+  }
+
+  private createSkeletonRows(rows: number) {
+    return Array.from({ length: rows }, (_, index) =>
+      this.createSingleRow(
+        index,
+        <>
+          <Skeleton width={35} height={35} {...skeletonProps} />
+          <Skeleton width={140} {...skeletonProps} />
+        </>,
+        <Skeleton width="90%" {...skeletonProps} />
+      )
     );
   }
 
