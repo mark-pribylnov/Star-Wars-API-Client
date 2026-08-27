@@ -126,7 +126,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     );
   }
 
-  private pickView(view: View) {
+  private createViewContent(view: View) {
     const { searchResults, searchTerm, isLoading } = this.props;
 
     if (view === 'loading' && searchResults) {
@@ -154,29 +154,32 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     }
   }
 
+  private pickView(): View {
+    const { searchResults, isLoading } = this.props;
+
+    if (isLoading && searchResults) {
+      return 'loading';
+    } else if (!searchResults) {
+      return 'failed-load-data';
+    } else if (searchResults.length > 0) {
+      return 'has-results';
+    } else {
+      return 'no-results';
+    }
+  }
+
   render() {
-    let view: View = null;
+    const view = this.pickView();
 
     const { searchResults, isLoading } = this.props;
     const resultsNumber = searchResults ? searchResults.length : null;
     const hasResults = resultsNumber ? resultsNumber > 0 : false;
-    // TODO: refactor: you might not need 'hasResults'
-
-    if (isLoading && searchResults) {
-      view = 'loading';
-    } else if (!searchResults) {
-      view = 'failed-load-data';
-    } else if (searchResults.length > 0) {
-      view = 'has-results';
-    } else {
-      view = 'no-results';
-    }
 
     return (
       <div className={styles.root}>
         {view !== 'failed-load-data' &&
           this.createHeading(isLoading, hasResults, resultsNumber)}
-        {this.pickView(view)}
+        {this.createViewContent(view)}
       </div>
     );
   }
