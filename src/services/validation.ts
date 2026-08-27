@@ -18,7 +18,19 @@ import { CATEGORIES } from '../types';
 import type { DataOriginal, DataShell } from '../types/base';
 
 export default class ValidationService {
+  static #instance: ValidationService;
+
   private ajv = new Ajv();
+
+  private constructor() {}
+
+  public static get instance(): ValidationService {
+    if (!ValidationService.#instance) {
+      ValidationService.#instance = new ValidationService();
+    }
+
+    return ValidationService.#instance;
+  }
 
   private validateCharacter = this.ajv.compile<Character>(CharacterSchema);
   private validateFilm = this.ajv.compile<FilmOriginal>(FilmSchema);

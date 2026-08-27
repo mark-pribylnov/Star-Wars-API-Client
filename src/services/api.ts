@@ -17,7 +17,7 @@ type Notify = (message: ReactNode, type: ToastType) => void;
 export default class ApiService {
   private BASE_URL = 'https://swapi.info/api/';
 
-  private validator = new ValidationService();
+  private validator = ValidationService.instance;
   private notify: Notify;
 
   constructor(notify: Notify) {
