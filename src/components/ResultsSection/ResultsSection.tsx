@@ -12,10 +12,12 @@ type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[] | null;
   searchTerm: string | null;
   isLoading: boolean;
+  loadFailed: boolean;
   onRetryLoadData: () => void;
 };
 
 type ViewData =
+  | { view: 'initial-loading' }
   | { view: 'loading'; searchResults: CategoryUnitWithDescription[] }
   | { view: 'has-results'; searchResults: CategoryUnitWithDescription[] }
   | { view: 'no-results' }
@@ -130,6 +132,8 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     const { searchTerm, isLoading } = this.props;
 
     switch (viewData.view) {
+      case 'initial-loading':
+        return null;
       case 'loading':
       case 'has-results':
         return this.createTable({
@@ -164,7 +168,11 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
   }
 
   private pickView(): ViewData {
-    const { searchResults, isLoading } = this.props;
+    const { searchResults, isLoading, loadFailed } = this.props;
+
+    if (loadFailed) return { view: 'failed-load-data' };
+
+    if (isLoading && !searchResults) return { view: 'initial-loading' };
 
     if (!searchResults) return { view: 'failed-load-data' };
     if (isLoading) return { view: 'loading', searchResults };
@@ -174,6 +182,8 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
 
   render() {
     const viewData = this.pickView();
+
+    if (viewData.view === 'initial-loading') return null;
 
     const { searchResults, isLoading } = this.props;
     const resultsNumber = searchResults ? searchResults.length : null;

@@ -1,8 +1,6 @@
 // TODO: migrate CSS to Tailwind
-// TODO: handle errors in ApiService from the API
 // TODO: in the end of the project check whether <RebelAllianceIcon/> is used. if not - delete
 // TODO: handle validation crash if API returns junk
-// TODO: replace empty array [] with null when initializing state
 // TODO: use https://github.com/bvaughn/react-error-boundary instead of your own ErrorBoundary (link from the docs)
 
 import { Component, type ReactNode } from 'react';
@@ -27,6 +25,7 @@ type AppState = {
   isLoading: boolean;
   hasCachedResults: boolean;
   hasCachedData: boolean;
+  loadFailed: boolean;
   errorSimulated: boolean;
 };
 
@@ -68,38 +67,40 @@ export default class App extends Component<Record<string, never>, AppState> {
 
     this.api = new ApiService(this.notify);
     this.state = {
-      data: allDataCached ?? [],
-      searchResults: resultsCached ?? allDataCached ?? [],
+      data: allDataCached,
+      searchResults: resultsCached ?? allDataCached,
       searchTerm,
       isLoading: !allDataCached,
       hasCachedResults: Boolean(resultsCached),
       hasCachedData: Boolean(allDataCached),
+      loadFailed: false,
       errorSimulated: false,
     };
   }
 
   async componentDidMount() {
-    let data = null;
-
     if (this.state.hasCachedData) {
-      data = this.state.data;
-    } else {
-      const packedData = await this.api.getAllData();
-      if (packedData) data = unpackData(packedData);
+      this.setState({ isLoading: false });
+      return;
+    }
 
+    const packedData = await this.api.getAllData();
+    const data = packedData ? unpackData(packedData) : null;
+
+    if (data) {
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.allDataCached,
         JSON.stringify(data)
       );
     }
 
-    const newState = { data, isLoading: false, hasCachedData: true };
-
-    if (this.state.hasCachedResults) {
-      this.setState(newState);
-    } else {
-      this.setState({ ...newState, searchResults: data });
-    }
+    this.setState({
+      data,
+      searchResults: data,
+      isLoading: false,
+      hasCachedData: Boolean(data),
+      loadFailed: !data,
+    });
   }
 
   search = async (searchTerm: string | null): Promise<void> => {
@@ -193,6 +194,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       searchResults: data,
       isLoading: false,
       hasCachedData: Boolean(data),
+      loadFailed: !data,
     });
   };
 
@@ -204,18 +206,21 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.errorSimulated)
       throw new Error('Artificial crash. Testing Error Boundary.');
 
+    const { data, isLoading, loadFailed } = this.state;
+
     return (
       <div className={styles['app-wrapper']}>
         <Header />
         <SearchSection
           search={this.search}
-          isLoading={this.state.isLoading}
-          isFailedToLoadData={!this.state.data}
+          isLoading={isLoading}
+          isFailedToLoadData={loadFailed || (!data && !isLoading)}
         />
         <ResultsSection
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}
-          isLoading={this.state.isLoading}
+          isLoading={isLoading}
+          loadFailed={loadFailed}
           onRetryLoadData={this.retryLoadData}
         />
         <ToastContainer position="bottom-right" />
