@@ -9,8 +9,6 @@
 // TODO: refactor creating rows
 // TODO: replace empty array [] with null when initializing state
 // TODO: use https://github.com/bvaughn/react-error-boundary instead of your own ErrorBoundary (link from the docs)
-// TODO: REFACTOR move APP to components/base
-// TODO: combine styles for 'search' and 'restore app' buttons into one file. Make something like button.scss
 
 import { Component, type ReactNode } from 'react';
 import styles from './App.module.scss';
