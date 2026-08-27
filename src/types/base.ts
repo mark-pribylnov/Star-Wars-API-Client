@@ -81,3 +81,5 @@ export type DataWithDescription =
     };
 
 export type ToastType = 'info' | 'success' | 'warning' | 'error';
+
+export type LoadErrorReason = 'fetch' | 'schema';

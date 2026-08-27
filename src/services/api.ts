@@ -2,6 +2,7 @@ import {
   CATEGORIES,
   type DataShell,
   type DataWithDescription,
+  type LoadErrorReason,
   type ToastType,
 } from '../types/base';
 import { getNotOkResponseMessage } from '../utils/responseMessage';
@@ -14,6 +15,10 @@ import type { ReactNode } from 'react';
 
 type Notify = (message: ReactNode, type: ToastType) => void;
 
+export type GetAllDataResult =
+  | { ok: true; data: DataWithDescription[] }
+  | { ok: false; reason: LoadErrorReason };
+
 export default class ApiService {
   private BASE_URL = 'https://swapi.info/api/';
 
@@ -24,7 +29,7 @@ export default class ApiService {
     this.notify = notify;
   }
 
-  async getAllData(): Promise<DataWithDescription[] | null> {
+  async getAllData(): Promise<GetAllDataResult> {
     let errorShown = false;
 
     const urls = Object.values(CATEGORIES).map((category) => {
@@ -59,14 +64,15 @@ export default class ApiService {
       return data.filter(Boolean).length === Object.keys(CATEGORIES).length;
     }
 
-    if (!dataDoesntHaveNull(data)) return null;
+    if (!dataDoesntHaveNull(data)) return { ok: false, reason: 'fetch' };
 
-    if (!this.validator.validateAllCategories(data))
-      throw new Error('Received data failed schema validation');
+    if (!this.validator.validateAllCategories(data)) {
+      return { ok: false, reason: 'schema' };
+    }
 
     const dataRefined = changeTitleToNameProperty(data);
     const withDescription = addDescriptionToData(dataRefined);
 
-    return withDescription;
+    return { ok: true, data: withDescription };
   }
 }

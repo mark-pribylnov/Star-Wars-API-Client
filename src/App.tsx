@@ -1,7 +1,9 @@
-// TODO: migrate CSS to Tailwind
-// TODO: in the end of the project check whether <RebelAllianceIcon/> is used. if not - delete
-// TODO: handle validation crash if API returns junk
-// TODO: use https://github.com/bvaughn/react-error-boundary instead of your own ErrorBoundary (link from the docs)
+// TODO at the end of the project:
+// - migrate CSS to Tailwind
+// - check whether <RebelAllianceIcon/> is used. if not - delete
+// - use https://github.com/bvaughn/react-error-boundary instead of your own ErrorBoundary (link from the docs)
+// TODO in the near future:
+// - nothing
 
 import { Component, type ReactNode } from 'react';
 import styles from './App.module.scss';
@@ -11,6 +13,7 @@ import { Header } from './components/Header/Header';
 import {
   LOCAL_STORAGE_KEYS,
   type CategoryUnitWithDescription,
+  type LoadErrorReason,
   type ToastType,
 } from './types/base';
 import ApiService from './services/api';
@@ -25,7 +28,7 @@ type AppState = {
   isLoading: boolean;
   hasCachedResults: boolean;
   hasCachedData: boolean;
-  loadFailed: boolean;
+  loadError: LoadErrorReason | null;
   errorSimulated: boolean;
 };
 
@@ -73,7 +76,7 @@ export default class App extends Component<Record<string, never>, AppState> {
       isLoading: !allDataCached,
       hasCachedResults: Boolean(resultsCached),
       hasCachedData: Boolean(allDataCached),
-      loadFailed: false,
+      loadError: null,
       errorSimulated: false,
     };
   }
@@ -84,22 +87,30 @@ export default class App extends Component<Record<string, never>, AppState> {
       return;
     }
 
-    const packedData = await this.api.getAllData();
-    const data = packedData ? unpackData(packedData) : null;
+    const result = await this.api.getAllData();
 
-    if (data) {
+    if (result.ok) {
+      const data = unpackData(result.data);
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.allDataCached,
         JSON.stringify(data)
       );
+      this.setState({
+        data,
+        searchResults: data,
+        isLoading: false,
+        hasCachedData: true,
+        loadError: null,
+      });
+      return;
     }
 
     this.setState({
-      data,
-      searchResults: data,
+      data: null,
+      searchResults: null,
       isLoading: false,
-      hasCachedData: Boolean(data),
-      loadFailed: !data,
+      hasCachedData: false,
+      loadError: result.reason,
     });
   }
 
@@ -177,24 +188,34 @@ export default class App extends Component<Record<string, never>, AppState> {
 
     localStorage.removeItem(LOCAL_STORAGE_KEYS.allDataCached);
 
-    const packedData = await this.api.getAllData();
-    const data = packedData ? unpackData(packedData) : null;
+    const result = await this.api.getAllData();
 
-    if (data) {
+    if (result.ok) {
+      const data = unpackData(result.data);
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.allDataCached,
         JSON.stringify(data)
       );
-    } else {
+      this.setState({
+        data,
+        searchResults: data,
+        isLoading: false,
+        hasCachedData: true,
+        loadError: null,
+      });
+      return;
+    }
+
+    if (result.reason === 'fetch') {
       this.notifyRetryFailed();
     }
 
     this.setState({
-      data,
-      searchResults: data,
+      data: null,
+      searchResults: null,
       isLoading: false,
-      hasCachedData: Boolean(data),
-      loadFailed: !data,
+      hasCachedData: false,
+      loadError: result.reason,
     });
   };
 
@@ -206,7 +227,8 @@ export default class App extends Component<Record<string, never>, AppState> {
     if (this.state.errorSimulated)
       throw new Error('Artificial crash. Testing Error Boundary.');
 
-    const { data, isLoading, loadFailed } = this.state;
+    const { data, isLoading, loadError } = this.state;
+    const isLoadFailed = loadError !== null;
 
     return (
       <div className={styles['app-wrapper']}>
@@ -214,13 +236,13 @@ export default class App extends Component<Record<string, never>, AppState> {
         <SearchSection
           search={this.search}
           isLoading={isLoading}
-          isFailedToLoadData={loadFailed || (!data && !isLoading)}
+          isFailedToLoadData={isLoadFailed || (!data && !isLoading)}
         />
         <ResultsSection
           searchResults={this.state.searchResults}
           searchTerm={this.state.searchTerm}
           isLoading={isLoading}
-          loadFailed={loadFailed}
+          loadError={loadError}
           onRetryLoadData={this.retryLoadData}
         />
         <ToastContainer position="bottom-right" />

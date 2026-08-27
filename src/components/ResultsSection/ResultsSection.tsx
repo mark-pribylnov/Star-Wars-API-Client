@@ -4,15 +4,17 @@ import type { CategoryUnitWithDescription } from '../../types/base';
 import { getItemImageURL } from '../../utils/imageURL';
 import NoResultsVisual from '../NoResultsVisual/NoResultsVisual';
 import FailedLoadVisual from '../FailedLoadVisual/FailedLoadVisual';
+import OutdatedAppVisual from '../OutdatedAppVisual/OutdatedAppVisual';
 import clsx from 'clsx';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import type { LoadErrorReason } from '../../types/base';
 
 type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[] | null;
   searchTerm: string | null;
   isLoading: boolean;
-  loadFailed: boolean;
+  loadError: LoadErrorReason | null;
   onRetryLoadData: () => void;
 };
 
@@ -21,7 +23,8 @@ type ViewData =
   | { view: 'loading'; searchResults: CategoryUnitWithDescription[] }
   | { view: 'has-results'; searchResults: CategoryUnitWithDescription[] }
   | { view: 'no-results' }
-  | { view: 'failed-load-data' };
+  | { view: 'failed-load-data' }
+  | { view: 'outdated-app' };
 
 const skeletonProps = {
   baseColor: '#1f2937',
@@ -147,6 +150,8 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
             isLoading={isLoading}
           />
         );
+      case 'outdated-app':
+        return <OutdatedAppVisual />;
       case 'no-results':
         return (
           <>
@@ -168,9 +173,10 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
   }
 
   private pickView(): ViewData {
-    const { searchResults, isLoading, loadFailed } = this.props;
+    const { searchResults, isLoading, loadError } = this.props;
 
-    if (loadFailed) return { view: 'failed-load-data' };
+    if (loadError === 'schema') return { view: 'outdated-app' };
+    if (loadError === 'fetch') return { view: 'failed-load-data' };
 
     if (isLoading && !searchResults) return { view: 'initial-loading' };
 
@@ -188,10 +194,12 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     const { searchResults, isLoading } = this.props;
     const resultsNumber = searchResults ? searchResults.length : null;
     const hasResults = resultsNumber ? resultsNumber > 0 : false;
+    const hideHeading =
+      viewData.view === 'failed-load-data' || viewData.view === 'outdated-app';
 
     return (
       <div className={styles.root}>
-        {viewData.view !== 'failed-load-data' &&
+        {!hideHeading &&
           this.createHeading(isLoading, hasResults, resultsNumber ?? 0)}
         {this.createViewContent(viewData)}
       </div>
