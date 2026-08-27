@@ -99,7 +99,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
   private createHeading(
     isLoading: boolean,
     hasResults: boolean,
-    resultsNumber: number | null
+    resultsNumber: number
   ) {
     let text = null;
 
@@ -178,7 +178,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     return (
       <div className={styles.root}>
         {view !== 'failed-load-data' &&
-          this.createHeading(isLoading, hasResults, resultsNumber)}
+          this.createHeading(isLoading, hasResults, resultsNumber ?? 0)}
         {this.createViewContent(view)}
       </div>
     );
