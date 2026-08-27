@@ -37,7 +37,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     const { isLoading, searchResults } = params;
 
     function createTableRows(params: Data | Rows) {
-      function renderRow(
+      function createSingleRow(
         key: string | number,
         name: ReactNode,
         description: ReactNode
@@ -54,7 +54,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
 
       if ('data' in params) {
         return params.data.map((item) =>
-          renderRow(
+          createSingleRow(
             item.name,
             <>
               <img
@@ -70,7 +70,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
       }
 
       return Array.from({ length: params.rows }, (_, index) =>
-        renderRow(
+        createSingleRow(
           index,
           <>
             <Skeleton width={35} height={35} {...skeletonProps} />
