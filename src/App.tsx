@@ -1,10 +1,7 @@
 // TODO: migrate CSS to Tailwind
 // TODO: handle errors in ApiService from the API
-// TODO: in types 'additional property: false' is duplicated in each file
-// TODO: show HTTP error to the user, not console (find toaster library)
 // TODO: in the end of the project check whether <RebelAllianceIcon/> is used. if not - delete
 // TODO: handle validation crash if API returns junk
-// TODO: handle network loss
 // TODO: replace empty array [] with null when initializing state
 // TODO: use https://github.com/bvaughn/react-error-boundary instead of your own ErrorBoundary (link from the docs)
 

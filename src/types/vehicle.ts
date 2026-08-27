@@ -19,7 +19,7 @@ export type Vehicle = {
   url: string;
 };
 
-const VehicleSchemaContent = {
+export const VehicleSchema: JSONSchemaType<Vehicle> = {
   type: 'object',
   additionalProperties: false,
   required: [
@@ -58,9 +58,4 @@ const VehicleSchemaContent = {
     edited: { type: 'string' },
     url: { type: 'string' },
   },
-} as const;
-
-export const VehicleSchema: JSONSchemaType<Vehicle> = {
-  ...VehicleSchemaContent,
-  additionalProperties: false,
 };

@@ -17,7 +17,7 @@ export type Planet = {
   url: string;
 };
 
-const PlanetSchemaContent = {
+export const PlanetSchema: JSONSchemaType<Planet>  = {
   type: 'object',
   additionalProperties: false,
   required: [
@@ -52,9 +52,4 @@ const PlanetSchemaContent = {
     edited: { type: 'string' },
     url: { type: 'string' },
   },
-} as const;
-
-export const PlanetSchema: JSONSchemaType<Planet> = {
-  ...PlanetSchemaContent,
-  additionalProperties: false,
-};
+}

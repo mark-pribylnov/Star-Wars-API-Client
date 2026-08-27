@@ -19,7 +19,7 @@ export type FilmOriginal = {
 
 export type FilmRefined = Omit<FilmOriginal, 'title'> & { name: string };
 
-const FilmSchemaContent = {
+export const FilmSchema: JSONSchemaType<FilmOriginal> = {
   type: 'object',
   additionalProperties: false,
   required: [
@@ -54,9 +54,4 @@ const FilmSchemaContent = {
     edited: { type: 'string' },
     url: { type: 'string' },
   },
-} as const;
-
-export const FilmSchema: JSONSchemaType<FilmOriginal> = {
-  ...FilmSchemaContent,
-  additionalProperties: false,
 };

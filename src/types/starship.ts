@@ -21,7 +21,7 @@ export type Starship = {
   url: string;
 };
 
-const StarshipSchemaContent = {
+export const StarshipSchema: JSONSchemaType<Starship> = {
   type: 'object',
   additionalProperties: false,
   required: [
@@ -64,9 +64,4 @@ const StarshipSchemaContent = {
     edited: { type: 'string' },
     url: { type: 'string' },
   },
-} as const;
-
-export const StarshipSchema: JSONSchemaType<Starship> = {
-  ...StarshipSchemaContent,
-  additionalProperties: false,
 };
