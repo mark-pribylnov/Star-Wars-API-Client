@@ -51,6 +51,14 @@
       padding-block: 5px;
     }
 
+    th {
+      color: #f4f7fb;
+    }
+
+    td {
+      color: #e8eef7;
+    }
+
     tr:not(:last-child) {
       border-bottom: 1px solid #464e5d6f;
     }
