@@ -13,12 +13,11 @@ type ResultsSectionProps = {
   isLoading: boolean;
 };
 
-type View =
-  | 'loading'
-  | 'has-results'
-  | 'no-results'
-  | 'failed-load-data'
-  | null;
+type ViewData =
+  | { view: 'loading'; searchResults: CategoryUnitWithDescription[] }
+  | { view: 'has-results'; searchResults: CategoryUnitWithDescription[] }
+  | { view: 'no-results' }
+  | { view: 'failed-load-data' };
 
 const skeletonProps = {
   baseColor: '#1f2937',
@@ -125,50 +124,49 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     );
   }
 
-  private createViewContent(view: View) {
-    const { searchResults, searchTerm, isLoading } = this.props;
+  private createViewContent(viewData: ViewData) {
+    const { searchTerm, isLoading } = this.props;
 
-    if (view === 'loading' && searchResults) {
-      // TODO: refactor and remove checking searchResults only for TS. '&& searchResults' exists only to satisfy TS
-      return this.createTable({ isLoading, searchResults });
-    } else if (view === 'failed-load-data') {
-      return <h2>Failed to load data</h2>;
-    } else if (view === 'has-results' && searchResults) {
-      // TODO: refactor and remove checking searchResults only for TS. '&& searchResults' exists only to satisfy TS
-      return this.createTable({ isLoading, searchResults });
-    } else if (view === 'no-results') {
-      return (
-        <>
-          <p className={styles['no-results-description']}>
-            We couldn&apos;t find any matches for&nbsp;
-            <span className={styles['no-results-description__search-term']}>
-              {searchTerm}
-            </span>
-          </p>
-          <NoResultsVisual searchTerm={searchTerm} />
-        </>
-      );
-    } else {
-      throw new Error('Case not handled');
+    switch (viewData.view) {
+      case 'loading':
+      case 'has-results':
+        return this.createTable({
+          isLoading,
+          searchResults: viewData.searchResults,
+        });
+      case 'failed-load-data':
+        return <h2>Failed to load data</h2>;
+      case 'no-results':
+        return (
+          <>
+            <p className={styles['no-results-description']}>
+              We couldn&apos;t find any matches for&nbsp;
+              <span className={styles['no-results-description__search-term']}>
+                {searchTerm}
+              </span>
+            </p>
+            <NoResultsVisual searchTerm={searchTerm} />
+          </>
+        );
+      default: {
+        // Exhaustive checking with 'never' - https://www.youtube.com/watch?v=d2sANVj4f2Y
+        const neverHappens: never = viewData;
+        return neverHappens;
+      }
     }
   }
 
-  private pickView(): View {
+  private pickView(): ViewData {
     const { searchResults, isLoading } = this.props;
 
-    if (isLoading && searchResults) {
-      return 'loading';
-    } else if (!searchResults) {
-      return 'failed-load-data';
-    } else if (searchResults.length > 0) {
-      return 'has-results';
-    } else {
-      return 'no-results';
-    }
+    if (!searchResults) return { view: 'failed-load-data' };
+    if (isLoading) return { view: 'loading', searchResults };
+    if (searchResults.length > 0) return { view: 'has-results', searchResults };
+    return { view: 'no-results' };
   }
 
   render() {
-    const view = this.pickView();
+    const viewData = this.pickView();
 
     const { searchResults, isLoading } = this.props;
     const resultsNumber = searchResults ? searchResults.length : null;
@@ -176,9 +174,9 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
 
     return (
       <div className={styles.root}>
-        {view !== 'failed-load-data' &&
+        {viewData.view !== 'failed-load-data' &&
           this.createHeading(isLoading, hasResults, resultsNumber ?? 0)}
-        {this.createViewContent(view)}
+        {this.createViewContent(viewData)}
       </div>
     );
   }
