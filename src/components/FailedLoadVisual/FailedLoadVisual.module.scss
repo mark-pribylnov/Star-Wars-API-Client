@@ -1,0 +1,78 @@
+@use '../../styles/shared/buttons' as *;
+
+.image {
+  display: block;
+  max-width: 500px;
+  margin-top: 15px;
+  margin-inline: auto;
+  mask-image:
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-composite: source-in;
+}
+
+.title {
+  margin: 0;
+  color: #f28b8b;
+  font-size: 1.35rem;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.text {
+  margin: 10px auto 0;
+  color: #e8eef7;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.retry-button {
+  @extend %CTA-button;
+  display: flex;
+  margin: 15px auto 0;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 40px;
+  border: 1px solid #4f9cf0;
+  background-color: transparent;
+  color: #7eb6f5;
+
+  &:not(:disabled):hover {
+    background-color: rgba(79, 156, 240, 0.12);
+    transform: none;
+  }
+}
+
+.retry-icon {
+  display: block;
+  flex-shrink: 0;
+  transform-origin: center;
+
+  &--spinning {
+    animation: retry-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes retry-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.persist-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0;
+  color: #8aa0b8;
+}

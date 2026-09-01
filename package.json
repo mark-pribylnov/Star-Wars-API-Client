@@ -14,8 +14,12 @@
     "ci:format": "prettier --check ."
   },
   "dependencies": {
+    "ajv": "^8.20.0",
+    "clsx": "^2.1.1",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-loading-skeleton": "^3.5.0",
+    "react-toastify": "^11.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
@@ -35,6 +39,7 @@
     "globals": "^17.5.0",
     "husky": "^9.1.7",
     "prettier": "^3.8.3",
+    "sass-embedded": "^1.100.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.10"

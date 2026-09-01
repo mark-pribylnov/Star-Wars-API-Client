@@ -1,0 +1,38 @@
+@use '../../styles/shared' as *;
+@use '../../styles/abstracts/functions' as *;
+
+.root {
+  @extend %section-base;
+  align-self: center;
+  min-width: 55%;
+  background-color: #0c1726;
+  border: 1px solid #464e5d;
+}
+
+.search-form {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-heading {
+  @include section-heading(#96cbf2);
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #050c16;
+  border: 1px solid transparent;
+  outline: none;
+  color: #acabb1;
+  font-size: 1rem;
+  &:focus {
+    border-color: #fae82c;
+  }
+}
+
+.search-button {
+  @extend %CTA-button;
+}
