@@ -1,0 +1,66 @@
+@use '../../styles/shared/placeholders' as *;
+@use '../../styles/shared/mixins' as *;
+@use '../../styles/abstracts/functions' as *;
+
+.root {
+  @extend %section-base;
+  margin-top: 20px;
+}
+
+.wrapper {
+  position: relative;
+  max-width: 520px;
+  margin-top: 10px;
+  margin-inline: auto;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  mask-image:
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-composite: source-in;
+}
+
+.quote-wrapper {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  width: min(90%, 360px);
+  text-align: center;
+}
+
+.text-wrapper {
+  position: relative;
+  padding: 10px 14px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.55);
+    filter: blur(10px);
+  }
+}
+
+.text {
+  margin: 0;
+  color: #e8eef7;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+.author {
+  margin: 8px 0 0;
+  color: #96cbf2;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
