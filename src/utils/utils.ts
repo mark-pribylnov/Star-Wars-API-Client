@@ -1,10 +1,15 @@
 import { CATEGORIES } from '../types';
 import type {
+  Category,
   DataOriginal,
   DataRefined,
   DataWithDescription,
 } from '../types/base';
 import { itemDescriptions } from '../data/itemDescriptions';
+
+export function addCategoryToData(category: Category, data: unknown) {
+  return { category, entries: data };
+}
 
 function changeTitleToNameProperty(arr: DataOriginal[]): DataRefined[] {
   return arr.map((entry) => {

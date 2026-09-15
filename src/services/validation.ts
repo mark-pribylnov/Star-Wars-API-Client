@@ -15,7 +15,21 @@ import {
   VehicleSchema,
 } from '../types';
 import { CATEGORIES } from '../types';
-import type { DataOriginal, DataShell } from '../types/base';
+import type {
+  DataOriginal,
+  DataShell,
+  DataShellNullable,
+  DataWithDescription,
+  LoadErrorReason,
+} from '../types/base';
+import { makeDataUsable } from '../utils/utils';
+
+type isDataShellValidResult =
+  | {
+      ok: false;
+      reason: LoadErrorReason;
+    }
+  | { ok: true; data: DataWithDescription[] };
 
 export default class ValidationService {
   static #instance: ValidationService;
@@ -48,12 +62,24 @@ export default class ValidationService {
     [CATEGORIES.vehicles]: this.validateVehicle,
   };
 
-  validateAllCategories(data: DataShell[]): data is DataOriginal[] {
+  private validateAllCategories(data: DataShell[]): data is DataOriginal[] {
     const isValid = data.every(({ category, entries }) => {
       if (!Array.isArray(entries)) throw new Error('Array expected');
 
       return entries.every((item) => this.categoryValidators[category](item));
     });
     return isValid;
+  }
+
+  private dataDoesntHaveNull(data: DataShellNullable[]): data is DataShell[] {
+    return data.filter(Boolean).length === Object.keys(CATEGORIES).length;
+  }
+
+  isDataShellValid(data: DataShellNullable[]): isDataShellValidResult {
+    if (!this.dataDoesntHaveNull(data)) return { ok: false, reason: 'fetch' };
+    if (!this.validateAllCategories(data))
+      return { ok: false, reason: 'schema' };
+
+    return { ok: true, data: makeDataUsable(data) };
   }
 }

@@ -1,12 +1,12 @@
 import {
   CATEGORIES,
-  type DataShell,
+  type DataShellNullable,
   type DataWithDescription,
   type LoadErrorReason,
   type ToastType,
 } from '../types/base';
 import { getNotOkResponseMessage } from '../utils/responseMessage';
-import { makeDataUsable } from '../utils/utils';
+import { addCategoryToData } from '../utils/utils';
 import ValidationService from './validation';
 import type { ReactNode } from 'react';
 
@@ -23,6 +23,7 @@ export default class ApiService {
   private notify: Notify;
 
   constructor(notify: Notify) {
+    localStorage.clear();
     this.notify = notify;
   }
 
@@ -37,7 +38,7 @@ export default class ApiService {
     });
 
     const promises = urls.map(
-      async ({ category, url }): Promise<DataShell | null> => {
+      async ({ category, url }): Promise<DataShellNullable> => {
         try {
           const response = await fetch(url);
 
@@ -46,7 +47,7 @@ export default class ApiService {
             errorShown = true;
           }
 
-          return { category, entries: await response.json() };
+          return addCategoryToData(category, await response.json());
         } catch {
           return null;
         }
@@ -55,18 +56,6 @@ export default class ApiService {
 
     const data = await Promise.all(promises);
 
-    function dataDoesntHaveNull(
-      data: (DataShell | null)[]
-    ): data is DataShell[] {
-      return data.filter(Boolean).length === Object.keys(CATEGORIES).length;
-    }
-
-    if (!dataDoesntHaveNull(data)) return { ok: false, reason: 'fetch' };
-
-    if (!this.validator.validateAllCategories(data)) {
-      return { ok: false, reason: 'schema' };
-    }
-
-    return { ok: true, data: makeDataUsable(data) };
+    return this.validator.isDataShellValid(data);
   }
 }

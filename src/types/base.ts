@@ -39,6 +39,8 @@ export type DataShell = {
   entries: unknown;
 };
 
+export type DataShellNullable = DataShell | null;
+
 type FilmEntriesOriginal = {
   category: typeof CATEGORIES.films;
   entries: FilmOriginal[];
