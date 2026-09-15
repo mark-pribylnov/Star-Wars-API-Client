@@ -6,10 +6,7 @@ import {
   type ToastType,
 } from '../types/base';
 import { getNotOkResponseMessage } from '../utils/responseMessage';
-import {
-  addDescriptionToData,
-  changeTitleToNameProperty,
-} from '../utils/utils';
+import { makeDataUsable } from '../utils/utils';
 import ValidationService from './validation';
 import type { ReactNode } from 'react';
 
@@ -70,9 +67,6 @@ export default class ApiService {
       return { ok: false, reason: 'schema' };
     }
 
-    const dataRefined = changeTitleToNameProperty(data);
-    const withDescription = addDescriptionToData(dataRefined);
-
-    return { ok: true, data: withDescription };
+    return { ok: true, data: makeDataUsable(data) };
   }
 }
