@@ -1,6 +1,7 @@
 import { CATEGORIES } from '../types';
 import type {
   Category,
+  CategoryUnitWithDescription,
   DataOriginal,
   DataRefined,
   DataWithDescription,
@@ -53,7 +54,9 @@ export function makeDataUsable(data: DataOriginal[]): DataWithDescription[] {
   return addDescriptionToData(withUpdatedPropertyName);
 }
 
-export function unpackData(data: DataWithDescription[]) {
+export function unpackData(
+  data: DataWithDescription[]
+): CategoryUnitWithDescription[] {
   return data.map((group) => group.entries).flat();
 }
 
