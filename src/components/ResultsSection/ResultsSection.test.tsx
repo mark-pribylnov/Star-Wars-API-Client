@@ -91,4 +91,47 @@ describe('Results section', () => {
       expect(screen.getByText('— YODA')).toBeVisible();
     });
   });
+
+  describe('Failed to load data due to an HTTP error', () => {
+    beforeEach(() => {
+      render(
+        <ResultsSection
+          searchResults={null}
+          searchTerm={null}
+          isLoading={false}
+          loadError={'fetch'}
+          onRetryLoadData={() => undefined}
+        />
+      );
+    });
+
+    test('Heading says "Failed to load data"', () => {
+      expect(
+        screen.getByRole('heading', {
+          level: 2,
+          name: /failed to load data/i,
+        })
+      ).toBeVisible();
+    });
+
+    test('Description is visible', () => {
+      expect(screen.getByText(/the galaxy is vast/i)).toBeVisible();
+    });
+
+    test('The image is visible', () => {
+      expect(
+        screen.getByRole('img', { name: /failed to load data/i })
+      ).toBeVisible();
+    });
+
+    test('Try again button is visible', () => {
+      expect(screen.getByRole('button', { name: /try again/i })).toBeVisible();
+    });
+
+    test('Tip is visible', () => {
+      expect(
+        screen.getByText('If the problem persists, please try again later.')
+      ).toBeVisible();
+    });
+  });
 });
