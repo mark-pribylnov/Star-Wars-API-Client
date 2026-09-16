@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import ResultsSection from './ResultsSection';
 import { mockApiData } from '../../test/fixtures/mockApiData';
 import { unpackData } from '../../utils/utils';
+import { TEST_IDs } from '../../test/IDs';
 
 describe('Results section', () => {
   describe('With results (submitted or empty search)', () => {
@@ -171,6 +172,35 @@ describe('Results section', () => {
     test('Tip is visible', () => {
       expect(
         screen.getByText('Please contact the developer to update the app.')
+      ).toBeVisible();
+    });
+  });
+
+  describe('Skeleton is visible during data loading', () => {
+    beforeEach(() => {
+      render(
+        <ResultsSection
+          searchResults={[]}
+          searchTerm={null}
+          isLoading={true}
+          loadError={null}
+          onRetryLoadData={() => undefined}
+        />
+      );
+    });
+
+    test('Heading says "Loading reslts..."', () => {
+      expect(
+        screen.getByRole('heading', {
+          level: 2,
+          name: /loading results/i,
+        })
+      ).toBeVisible();
+    });
+
+    test('Skeleton is visible', () => {
+      expect(
+        screen.getAllByTestId(TEST_IDs.loadingSkeletonRow)[0]
       ).toBeVisible();
     });
   });
