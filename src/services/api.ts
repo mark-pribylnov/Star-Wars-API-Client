@@ -23,7 +23,6 @@ export default class ApiService {
   private notify: Notify;
 
   constructor(notify: Notify) {
-    localStorage.clear();
     this.notify = notify;
   }
 
