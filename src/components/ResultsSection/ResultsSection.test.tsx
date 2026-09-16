@@ -134,4 +134,44 @@ describe('Results section', () => {
       ).toBeVisible();
     });
   });
+
+  describe('Failed to load data due to an API update', () => {
+    beforeEach(() => {
+      render(
+        <ResultsSection
+          searchResults={null}
+          searchTerm={null}
+          isLoading={false}
+          loadError={'schema'}
+          onRetryLoadData={() => undefined}
+        />
+      );
+    });
+
+    test('Heading says "App needs an update"', () => {
+      expect(
+        screen.getByRole('heading', {
+          level: 2,
+          name: /app needs an update/i,
+        })
+      ).toBeVisible();
+    });
+
+    test('Description has a link to the API', () => {
+      expect(screen.getByRole('link', { name: 'API' })).toBeVisible();
+      expect(screen.getByText(/data format has changed/i)).toBeVisible();
+    });
+
+    test('The image is visible', () => {
+      expect(
+        screen.getByRole('img', { name: /app needs an update/i })
+      ).toBeVisible();
+    });
+
+    test('Tip is visible', () => {
+      expect(
+        screen.getByText('Please contact the developer to update the app.')
+      ).toBeVisible();
+    });
+  });
 });
