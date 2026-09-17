@@ -24,6 +24,11 @@ export const SESSION_STORAGE_KEYS = {
   loadError: 'loadError',
 } as const;
 
+export const LOAD_ERROR_REASON = {
+  fetch: 'fetch',
+  schema: 'schema',
+} as const;
+
 export type CategoryUnit =
   | Character
   | FilmRefined
@@ -33,6 +38,9 @@ export type CategoryUnit =
   | Vehicle;
 
 export type Category = (typeof CATEGORIES)[keyof typeof CATEGORIES];
+
+export type LoadErrorReason =
+  (typeof LOAD_ERROR_REASON)[keyof typeof LOAD_ERROR_REASON];
 
 export type DataShell = {
   category: Category;
@@ -87,5 +95,3 @@ export type DataWithDescription =
     };
 
 export type ToastType = 'info' | 'success' | 'warning' | 'error';
-
-export type LoadErrorReason = 'fetch' | 'schema';
