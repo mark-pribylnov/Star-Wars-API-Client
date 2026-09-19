@@ -1,5 +1,6 @@
 import {
   CATEGORIES,
+  type Category,
   type DataShellNullable,
   type DataWithDescription,
   type LoadErrorReason,
@@ -22,6 +23,10 @@ export default class ApiService {
   private validator = ValidationService.instance;
   private notify: Notify;
 
+  private async requestOneCategory(category: Category): Promise<Response> {
+    return await fetch(this.BASE_URL + category);
+  }
+
   constructor(notify: Notify) {
     this.notify = notify;
   }
@@ -29,17 +34,10 @@ export default class ApiService {
   async getAllData(): Promise<GetAllDataResult> {
     let errorShown = false;
 
-    const urls = Object.values(CATEGORIES).map((category) => {
-      return {
-        category,
-        url: this.BASE_URL + category,
-      };
-    });
-
-    const promises = urls.map(
-      async ({ category, url }): Promise<DataShellNullable> => {
+    const promises = Object.values(CATEGORIES).map(
+      async (category): Promise<DataShellNullable> => {
         try {
-          const response = await fetch(url);
+          const response = await this.requestOneCategory(category);
 
           if (!response.ok && !errorShown) {
             this.notify(getNotOkResponseMessage(response), 'error');
