@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import type { LoadErrorReason } from '../../types/base';
+import { TEST_IDs } from '../../test/IDs';
 
 type ResultsSectionProps = {
   searchResults: CategoryUnitWithDescription[] | null;
@@ -76,10 +77,14 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
   private createSingleRow(
     key: string | number,
     name: ReactNode,
-    description: ReactNode
+    description: ReactNode,
+    addTestId?: 'add-test-id'
   ) {
     return (
-      <tr key={key}>
+      <tr
+        key={key}
+        data-testid={addTestId ? TEST_IDs.loadingSkeletonRow : undefined}
+      >
         <th>
           <span className={styles['name-wrapper']}>{name}</span>
         </th>
@@ -96,7 +101,8 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
           <Skeleton width={35} height={35} {...skeletonProps} />
           <Skeleton width={140} {...skeletonProps} />
         </>,
-        <Skeleton width="90%" {...skeletonProps} />
+        <Skeleton width="90%" {...skeletonProps} />,
+        'add-test-id'
       )
     );
   }

@@ -1,12 +1,18 @@
 import { CATEGORIES } from '../types';
 import type {
+  Category,
+  CategoryUnitWithDescription,
   DataOriginal,
   DataRefined,
   DataWithDescription,
 } from '../types/base';
 import { itemDescriptions } from '../data/itemDescriptions';
 
-export function changeTitleToNameProperty(arr: DataOriginal[]): DataRefined[] {
+export function addCategoryToData(category: Category, data: unknown) {
+  return { category, entries: data };
+}
+
+function changeTitleToNameProperty(arr: DataOriginal[]): DataRefined[] {
   return arr.map((entry) => {
     if (entry.category === CATEGORIES.films) {
       const updatedEntries = entry.entries.map((item) => {
@@ -20,9 +26,7 @@ export function changeTitleToNameProperty(arr: DataOriginal[]): DataRefined[] {
   });
 }
 
-export function addDescriptionToData(
-  data: DataRefined[]
-): DataWithDescription[] {
+function addDescriptionToData(data: DataRefined[]): DataWithDescription[] {
   const withDescription = data.map((group) => {
     const entriesWithDescription = group.entries.map((entry) => {
       const description = itemDescriptions.find(
@@ -45,7 +49,14 @@ export function addDescriptionToData(
   return withDescription;
 }
 
-export function unpackData(data: DataWithDescription[]) {
+export function makeDataUsable(data: DataOriginal[]): DataWithDescription[] {
+  const withUpdatedPropertyName = changeTitleToNameProperty(data);
+  return addDescriptionToData(withUpdatedPropertyName);
+}
+
+export function unpackData(
+  data: DataWithDescription[]
+): CategoryUnitWithDescription[] {
   return data.map((group) => group.entries).flat();
 }
 
