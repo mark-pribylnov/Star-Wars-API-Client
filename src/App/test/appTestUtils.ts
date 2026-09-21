@@ -31,10 +31,7 @@ export function setupAppTest() {
 
 export function cacheAllData() {
   // Put catalog in localStorage so App starts already loaded (skips the fetch and has data for search).
-  localStorage.setItem(
-    LOCAL_STORAGE_KEYS.allDataCached,
-    JSON.stringify(data)
-  );
+  localStorage.setItem(LOCAL_STORAGE_KEYS.allDataCached, JSON.stringify(data));
 }
 
 export function cacheLastSearch(

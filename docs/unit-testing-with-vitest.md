@@ -29,13 +29,13 @@ A test compares **expected** behaviour with **actual** behaviour.
 
 ## This project’s setup (already done)
 
-| Tool | Role |
-|------|------|
-| **Vitest** | Test runner (Jest-like API, Vite-native) |
-| **jsdom** | Fake browser (`document`, `window`) |
-| **@testing-library/react** | `render`, `screen`, `waitFor` |
+| Tool                          | Role                                                                         |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| **Vitest**                    | Test runner (Jest-like API, Vite-native)                                     |
+| **jsdom**                     | Fake browser (`document`, `window`)                                          |
+| **@testing-library/react**    | `render`, `screen`, `waitFor`                                                |
 | **@testing-library/jest-dom** | Matchers like `toBeInTheDocument()` (name is historical — works with Vitest) |
-| **@vitest/coverage-v8** | Coverage reports |
+| **@vitest/coverage-v8**       | Coverage reports                                                             |
 
 ### Config highlights
 
@@ -62,11 +62,11 @@ import '@testing-library/jest-dom/vitest';
 
 ### Scripts
 
-| Command | What it does |
-|---------|----------------|
-| `npm test` | Vitest in **watch** mode (local) |
-| `npm run test:run` | One run (CI) |
-| `npm run test:coverage` | One run + coverage |
+| Command                 | What it does                     |
+| ----------------------- | -------------------------------- |
+| `npm test`              | Vitest in **watch** mode (local) |
+| `npm run test:run`      | One run (CI)                     |
+| `npm run test:coverage` | One run + coverage               |
 
 GitHub Actions should use `test:run`, not watch.
 
@@ -195,7 +195,11 @@ test('calls onRetry when Try again is clicked', async () => {
   const onRetry = vi.fn();
   const user = userEvent.setup();
 
-  render(<button type="button" onClick={onRetry}>Try again</button>);
+  render(
+    <button type="button" onClick={onRetry}>
+      Try again
+    </button>
+  );
 
   await user.click(screen.getByRole('button', { name: /try again/i }));
   expect(onRetry).toHaveBeenCalled();
@@ -204,12 +208,12 @@ test('calls onRetry when Try again is clicked', async () => {
 
 ### Querying inputs and buttons
 
-| Goal | Query |
-|------|--------|
+| Goal               | Query                                                                      |
+| ------------------ | -------------------------------------------------------------------------- |
 | Text / email input | `screen.getByRole('textbox')` or `getByPlaceholderText` / `getByLabelText` |
-| Button | `screen.getByRole('button', { name: /submit/i })` |
-| By visible text | `screen.getByText(/…/i)` |
-| Several same nodes | `screen.getAllByRole` / `getAllByTestId` |
+| Button             | `screen.getByRole('button', { name: /submit/i })`                          |
+| By visible text    | `screen.getByText(/…/i)`                                                   |
+| Several same nodes | `screen.getAllByRole` / `getAllByTestId`                                   |
 
 Roles come from HTML semantics ([ARIA roles](https://www.w3.org/TR/html-aria/#docconformance)). Prefer role/label/text over `data-testid` unless there’s no accessible name.
 
@@ -263,11 +267,11 @@ In this app, data loading goes through `ApiService` / `getAllData`. Pattern:
 
 Vitest equivalents of the article’s Jest APIs:
 
-| Jest (article) | Vitest |
-|----------------|--------|
-| `jest.fn()` | `vi.fn()` |
+| Jest (article)              | Vitest                    |
+| --------------------------- | ------------------------- |
+| `jest.fn()`                 | `vi.fn()`                 |
 | `jest.spyOn(obj, 'method')` | `vi.spyOn(obj, 'method')` |
-| `jest.mock('./path')` | `vi.mock('./path')` |
+| `jest.mock('./path')`       | `vi.mock('./path')`       |
 
 Example shape (spy + mock implementation):
 
@@ -316,16 +320,16 @@ This project uses **class** components (`Header`, `App`, …). Testing Library d
 
 ## Cheat sheet: article → this repo
 
-| freeCodeCamp (CRA + Jest) | This repo (Vite + Vitest) |
-|---------------------------|---------------------------|
-| `create-react-app` | Vite (already) |
-| Jest via `react-scripts test` | `vitest` / `vitest run` |
-| `setupTests.js` + jest-dom | `src/setupTests.ts` + `@testing-library/jest-dom/vitest` |
-| `import` matchers twice (`extend-expect`) | One import only |
-| `__tests__/` folder | Optional; prefer `Component.test.tsx` beside the component |
-| `jest.fn` / `jest.spyOn` | `vi.fn` / `vi.spyOn` |
-| Watch + coverage in one CRA script | `npm test` / `npm run test:coverage` |
-| No jsdom config | `test.environment: 'jsdom'` |
+| freeCodeCamp (CRA + Jest)                 | This repo (Vite + Vitest)                                  |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `create-react-app`                        | Vite (already)                                             |
+| Jest via `react-scripts test`             | `vitest` / `vitest run`                                    |
+| `setupTests.js` + jest-dom                | `src/setupTests.ts` + `@testing-library/jest-dom/vitest`   |
+| `import` matchers twice (`extend-expect`) | One import only                                            |
+| `__tests__/` folder                       | Optional; prefer `Component.test.tsx` beside the component |
+| `jest.fn` / `jest.spyOn`                  | `vi.fn` / `vi.spyOn`                                       |
+| Watch + coverage in one CRA script        | `npm test` / `npm run test:coverage`                       |
+| No jsdom config                           | `test.environment: 'jsdom'`                                |
 
 ---
 
@@ -350,4 +354,4 @@ This project uses **class** components (`Header`, `App`, …). Testing Library d
 
 ---
 
-*This guide rewrites the freeCodeCamp tutorial’s ideas for Vitest and this codebase. Prefer behaviour over implementation, mock the network, and keep tests next to the code they protect.*
+_This guide rewrites the freeCodeCamp tutorial’s ideas for Vitest and this codebase. Prefer behaviour over implementation, mock the network, and keep tests next to the code they protect._

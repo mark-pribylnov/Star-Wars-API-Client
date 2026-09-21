@@ -12,20 +12,20 @@ Users who can’t see the screen hear things like “Star Wars Search, heading, 
 
 In HTML you usually get roles **for free** from the tag:
 
-| Markup | Default role (simplified) |
-|--------|---------------------------|
-| `<button>` | `button` |
-| `<a href="...">` | `link` |
-| `<h1>`…`<h6>` | `heading` (with a level) |
-| `<input>` (text) | `textbox` |
-| `<input type="checkbox">` | `checkbox` |
-| `<nav>` | `navigation` |
-| `<header>` (page banner) | often `banner` |
-| `<main>` | `main` |
-| `<ul>` / `<ol>` | `list` |
-| `<li>` | `listitem` |
-| `<img alt="...">` | `img` |
-| `<div>`, `<span>` | **no** meaningful role by default |
+| Markup                    | Default role (simplified)         |
+| ------------------------- | --------------------------------- |
+| `<button>`                | `button`                          |
+| `<a href="...">`          | `link`                            |
+| `<h1>`…`<h6>`             | `heading` (with a level)          |
+| `<input>` (text)          | `textbox`                         |
+| `<input type="checkbox">` | `checkbox`                        |
+| `<nav>`                   | `navigation`                      |
+| `<header>` (page banner)  | often `banner`                    |
+| `<main>`                  | `main`                            |
+| `<ul>` / `<ol>`           | `list`                            |
+| `<li>`                    | `listitem`                        |
+| `<img alt="...">`         | `img`                             |
+| `<div>`, `<span>`         | **no** meaningful role by default |
 
 So: **role ≈ the accessible “type” of the element.**
 
@@ -42,7 +42,7 @@ These tables say: for each HTML element (and important attributes), what the **i
 
 Also useful:
 
-- [WAI-ARIA roles list](https://www.w3.org/TR/wai-aria-1.2/#role_definitions) — what each role *means*
+- [WAI-ARIA roles list](https://www.w3.org/TR/wai-aria-1.2/#role_definitions) — what each role _means_
 - [MDN: ARIA roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles)
 - [MDN: ARIA in HTML](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Html)
 
@@ -71,7 +71,7 @@ That prints roles Testing Library can query — great when `getByRole` fails and
 `getByRole` usually needs both:
 
 ```ts
-screen.getByRole('heading', { name: /star wars search/i })
+screen.getByRole('heading', { name: /star wars search/i });
 //              ^^^^^^^^         ^^^^^^^^^^^^^^^^^^^^^^^^
 //              role             accessible name
 ```
@@ -95,13 +95,13 @@ No usable name → `getByRole('button', { name: /…/ })` won’t find it even i
 
 **Best practice:** use the right element so the **default** role is correct.
 
-| Goal | Prefer | Avoid |
-|------|--------|--------|
-| Clickable action | `<button>` | `<div role="button" onClick={…}>` |
-| Navigate somewhere | `<a href="…">` | `<div role="link">` |
-| Page title | `<h1>` | `<div role="heading" aria-level="1">` |
-| Text field | `<input>` / `<textarea>` | `<div role="textbox" contentEditable>` |
-| List | `<ul>` / `<ol>` + `<li>` | `<div role="list">` + `<div role="listitem">` |
+| Goal               | Prefer                   | Avoid                                         |
+| ------------------ | ------------------------ | --------------------------------------------- |
+| Clickable action   | `<button>`               | `<div role="button" onClick={…}>`             |
+| Navigate somewhere | `<a href="…">`           | `<div role="link">`                           |
+| Page title         | `<h1>`                   | `<div role="heading" aria-level="1">`         |
+| Text field         | `<input>` / `<textarea>` | `<div role="textbox" contentEditable>`        |
+| List               | `<ul>` / `<ol>` + `<li>` | `<div role="list">` + `<div role="listitem">` |
 
 Why: real buttons get keyboard support, form participation, and expected AT behavior. Fake roles with `<div>` need extra work (`tabIndex`, `onKeyDown`, …) and are easy to get wrong.
 
@@ -109,7 +109,7 @@ Why: real buttons get keyboard support, form participation, and expected AT beha
 
 ---
 
-## 5. When *should* you assign a role?
+## 5. When _should_ you assign a role?
 
 Assign `role` (and usually name/state attributes) when:
 
@@ -137,7 +137,7 @@ Examples that are legitimate:
 
 ---
 
-## 6. When should you *not* assign a role?
+## 6. When should you _not_ assign a role?
 
 - **Don’t** override a correct native role (`<button role="link">` — confusing).
 - **Don’t** put `role="button"` on something that isn’t keyboard-operable.
@@ -156,15 +156,18 @@ Many nodes are **generic** / presentational in the accessibility tree: especiall
 Consequences:
 
 - `getByRole('something')` **won’t** find them unless you give a role (or use a different query).
-- For static copy inside a `<p>` or `<div>`, use **`getByText`** (or wrap in a heading/label if it *should* be one).
+- For static copy inside a `<p>` or `<div>`, use **`getByText`** (or wrap in a heading/label if it _should_ be one).
 - For layout wrappers, **don’t** invent roles. Query the interactive child (`button`, `textbox`) or the heading instead.
 
 Example from a typical card:
 
 ```html
-<div class="card">           <!-- no useful role -->
-  <h2>Failed to load data</h2>   <!-- role: heading -->
-  <button>Try again</button>     <!-- role: button -->
+<div class="card">
+  <!-- no useful role -->
+  <h2>Failed to load data</h2>
+  <!-- role: heading -->
+  <button>Try again</button>
+  <!-- role: button -->
 </div>
 ```
 
@@ -180,27 +183,27 @@ screen.getByRole('button', { name: /try again/i });
 
 ## 8. Common roles you’ll use with `getByRole`
 
-| Role | Typical HTML | Example query |
-|------|--------------|----------------|
-| `button` | `<button>`, sometimes `<input type="button">` | `getByRole('button', { name: /search/i })` |
-| `textbox` | `<input>` (text), `<textarea>` | `getByRole('textbox', { name: /…/i })` |
-| `heading` | `<h1>`–`<h6>` | `getByRole('heading', { name: /star wars search/i })` |
-| `link` | `<a href>` | `getByRole('link', { name: /api/i })` |
-| `img` | `<img>` with alt | `getByRole('img', { name: /…/i })` |
-| `list` / `listitem` | `<ul>`/`<ol>`/`<li>` | `getByRole('list')` |
-| `checkbox` / `radio` | matching `<input>` | `getByRole('checkbox', { name: /…/i })` |
-| `banner` | top-level `<header>` | `getByRole('banner')` |
-| `main` | `<main>` | `getByRole('main')` |
-| `navigation` | `<nav>` | `getByRole('navigation')` |
-| `alert` / `status` | live regions | depends on markup |
-| `dialog` | modal UI | `getByRole('dialog', { name: /…/i })` |
+| Role                 | Typical HTML                                  | Example query                                         |
+| -------------------- | --------------------------------------------- | ----------------------------------------------------- |
+| `button`             | `<button>`, sometimes `<input type="button">` | `getByRole('button', { name: /search/i })`            |
+| `textbox`            | `<input>` (text), `<textarea>`                | `getByRole('textbox', { name: /…/i })`                |
+| `heading`            | `<h1>`–`<h6>`                                 | `getByRole('heading', { name: /star wars search/i })` |
+| `link`               | `<a href>`                                    | `getByRole('link', { name: /api/i })`                 |
+| `img`                | `<img>` with alt                              | `getByRole('img', { name: /…/i })`                    |
+| `list` / `listitem`  | `<ul>`/`<ol>`/`<li>`                          | `getByRole('list')`                                   |
+| `checkbox` / `radio` | matching `<input>`                            | `getByRole('checkbox', { name: /…/i })`               |
+| `banner`             | top-level `<header>`                          | `getByRole('banner')`                                 |
+| `main`               | `<main>`                                      | `getByRole('main')`                                   |
+| `navigation`         | `<nav>`                                       | `getByRole('navigation')`                             |
+| `alert` / `status`   | live regions                                  | depends on markup                                     |
+| `dialog`             | modal UI                                      | `getByRole('dialog', { name: /…/i })`                 |
 
 Options you’ll use often:
 
 ```ts
-getByRole('heading', { level: 1, name: /…/i })
-getByRole('button', { name: /try again/i, hidden: true }) // include aria-hidden (rare)
-getByRole('textbox', { name: /search/i })
+getByRole('heading', { level: 1, name: /…/i });
+getByRole('button', { name: /try again/i, hidden: true }); // include aria-hidden (rare)
+getByRole('textbox', { name: /search/i });
 ```
 
 Full query docs: [ByRole – Testing Library](https://testing-library.com/docs/queries/byrole).
@@ -210,9 +213,11 @@ Full query docs: [ByRole – Testing Library](https://testing-library.com/docs/q
 ## 9. How this maps to your Header
 
 ```tsx
-<header>                          {/* often banner at page level */}
-  <h1>Star Wars Search</h1>       {/* heading, name from text */}
-  <p>Search characters…</p>       {/* no special role — use getByText if needed */}
+<header>
+  {' '}
+  {/* often banner at page level */}
+  <h1>Star Wars Search</h1> {/* heading, name from text */}
+  <p>Search characters…</p> {/* no special role — use getByText if needed */}
 </header>
 ```
 
@@ -255,16 +260,16 @@ What am I looking for?
 
 ## 11. Where to read “everything”
 
-| Resource | What you’ll learn |
-|----------|-------------------|
-| [ARIA in HTML](https://www.w3.org/TR/html-aria/) | Allowed roles per HTML element; defaults |
-| [HTML-AAM](https://w3c.github.io/html-aam/) | How HTML maps to accessibility APIs |
-| [WAI-ARIA 1.2 roles](https://www.w3.org/TR/wai-aria-1.2/#role_definitions) | Definitions of every role |
-| [ARIA Authoring Practices (APG)](https://www.w3.org/WAI/ARIA/apg/) | Patterns for tabs, dialogs, comboboxes (keyboard + roles) |
-| [Testing Library – ByRole](https://testing-library.com/docs/queries/byrole) | How queries use roles + names |
-| [Testing Library – Query priority](https://testing-library.com/docs/queries/about/#priority) | Why `*ByRole` comes first |
-| [MDN ARIA roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles) | Friendlier explanations + examples |
-| [ClarityDev: RTL best practices](https://claritydev.net/blog/improving-react-testing-library-tests) | Prefer `*ByRole` in tests |
+| Resource                                                                                            | What you’ll learn                                         |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [ARIA in HTML](https://www.w3.org/TR/html-aria/)                                                    | Allowed roles per HTML element; defaults                  |
+| [HTML-AAM](https://w3c.github.io/html-aam/)                                                         | How HTML maps to accessibility APIs                       |
+| [WAI-ARIA 1.2 roles](https://www.w3.org/TR/wai-aria-1.2/#role_definitions)                          | Definitions of every role                                 |
+| [ARIA Authoring Practices (APG)](https://www.w3.org/WAI/ARIA/apg/)                                  | Patterns for tabs, dialogs, comboboxes (keyboard + roles) |
+| [Testing Library – ByRole](https://testing-library.com/docs/queries/byrole)                         | How queries use roles + names                             |
+| [Testing Library – Query priority](https://testing-library.com/docs/queries/about/#priority)        | Why `*ByRole` comes first                                 |
+| [MDN ARIA roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles)   | Friendlier explanations + examples                        |
+| [ClarityDev: RTL best practices](https://claritydev.net/blog/improving-react-testing-library-tests) | Prefer `*ByRole` in tests                                 |
 
 You will **not** memorize every role. Workflow: semantic HTML → check a11y tree / `logRoles` → query by role + name → only then consider `aria-*` or custom roles for complex widgets.
 
@@ -272,14 +277,14 @@ You will **not** memorize every role. Workflow: semantic HTML → check a11y tre
 
 ## 12. Short glossary
 
-| Term | Meaning |
-|------|---------|
-| **Implicit / default role** | Role the browser assigns from the HTML tag |
-| **Explicit role** | `role="…"` you set in markup |
-| **Accessible name** | The string AT uses as the control’s label |
-| **Accessibility tree** | Parallel tree of roles/names/states (not the full DOM) |
-| **Landmark** | Roles like `main`, `navigation`, `banner` for page regions |
-| **Presentational / none** | Hide semantics from the a11y tree (`role="presentation"`) — use carefully |
+| Term                        | Meaning                                                                   |
+| --------------------------- | ------------------------------------------------------------------------- |
+| **Implicit / default role** | Role the browser assigns from the HTML tag                                |
+| **Explicit role**           | `role="…"` you set in markup                                              |
+| **Accessible name**         | The string AT uses as the control’s label                                 |
+| **Accessibility tree**      | Parallel tree of roles/names/states (not the full DOM)                    |
+| **Landmark**                | Roles like `main`, `navigation`, `banner` for page regions                |
+| **Presentational / none**   | Hide semantics from the a11y tree (`role="presentation"`) — use carefully |
 
 ---
 
@@ -293,4 +298,4 @@ You will **not** memorize every role. Workflow: semantic HTML → check a11y tre
 
 ---
 
-*Roles are an accessibility contract. Tests that use `getByRole` lock in that contract. Prefer good HTML defaults; assign roles only when building real widgets—and then follow APG.*
+_Roles are an accessibility contract. Tests that use `getByRole` lock in that contract. Prefer good HTML defaults; assign roles only when building real widgets—and then follow APG._
