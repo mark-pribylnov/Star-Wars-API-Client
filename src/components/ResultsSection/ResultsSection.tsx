@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import styles from './ResultsSection.module.scss';
 import type { CategoryUnitWithDescription } from '../../types/base';
 import { getItemImageURL } from '../../utils/imageURL';
@@ -33,8 +33,8 @@ const skeletonProps = {
   enableAnimation: true,
 } as const;
 
-export default class ResultsSection extends Component<ResultsSectionProps> {
-  private createTable(params: {
+export default function ResultsSection(props: ResultsSectionProps) {
+  function createTable(params: {
     isLoading: boolean;
     searchResults: CategoryUnitWithDescription[];
   }) {
@@ -49,17 +49,15 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
           </tr>
         </thead>
         <tbody>
-          {isLoading
-            ? this.createSkeletonRows(10)
-            : this.createDataRows(searchResults)}
+          {isLoading ? createSkeletonRows(10) : createDataRows(searchResults)}
         </tbody>
       </table>
     );
   }
 
-  private createDataRows(data: CategoryUnitWithDescription[]) {
+  function createDataRows(data: CategoryUnitWithDescription[]) {
     return data.map((item) =>
-      this.createSingleRow(
+      createSingleRow(
         item.name,
         <>
           <img
@@ -74,7 +72,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     );
   }
 
-  private createSingleRow(
+  function createSingleRow(
     key: string | number,
     name: ReactNode,
     description: ReactNode,
@@ -93,9 +91,9 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     );
   }
 
-  private createSkeletonRows(rows: number) {
+  function createSkeletonRows(rows: number) {
     return Array.from({ length: rows }, (_, index) =>
-      this.createSingleRow(
+      createSingleRow(
         index,
         <>
           <Skeleton width={35} height={35} {...skeletonProps} />
@@ -107,7 +105,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     );
   }
 
-  private createHeading(
+  function createHeading(
     isLoading: boolean,
     hasResults: boolean,
     resultsNumber: number
@@ -137,22 +135,22 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     );
   }
 
-  private createViewContent(viewData: ViewData) {
-    const { searchTerm, isLoading } = this.props;
+  function createViewContent(viewData: ViewData) {
+    const { searchTerm, isLoading } = props;
 
     switch (viewData.view) {
       case 'initial-loading':
         return null;
       case 'loading':
       case 'has-results':
-        return this.createTable({
+        return createTable({
           isLoading,
           searchResults: viewData.searchResults,
         });
       case 'failed-load-data':
         return (
           <FailedLoadVisual
-            onRetryLoadData={this.props.onRetryLoadData}
+            onRetryLoadData={props.onRetryLoadData}
             isLoading={isLoading}
           />
         );
@@ -167,7 +165,7 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
                 {searchTerm}
               </span>
             </p>
-            <NoResultsVisual searchTerm={searchTerm} />
+            <NoResultsVisual />
           </>
         );
       default: {
@@ -178,8 +176,8 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     }
   }
 
-  private pickView(): ViewData {
-    const { searchResults, isLoading, loadError } = this.props;
+  function pickView(): ViewData {
+    const { searchResults, isLoading, loadError } = props;
 
     if (loadError === 'schema') return { view: 'outdated-app' };
     if (loadError === 'fetch') return { view: 'failed-load-data' };
@@ -192,23 +190,20 @@ export default class ResultsSection extends Component<ResultsSectionProps> {
     return { view: 'no-results' };
   }
 
-  render() {
-    const viewData = this.pickView();
+  const viewData = pickView();
 
-    const { searchResults, isLoading } = this.props;
-    const resultsNumber = searchResults ? searchResults.length : null;
-    const hasResults = resultsNumber ? resultsNumber > 0 : false;
-    const hideHeading =
-      viewData.view === 'failed-load-data' ||
-      viewData.view === 'outdated-app' ||
-      viewData.view === 'initial-loading';
+  const { searchResults, isLoading } = props;
+  const resultsNumber = searchResults ? searchResults.length : null;
+  const hasResults = resultsNumber ? resultsNumber > 0 : false;
+  const hideHeading =
+    viewData.view === 'failed-load-data' ||
+    viewData.view === 'outdated-app' ||
+    viewData.view === 'initial-loading';
 
-    return (
-      <div className={styles.root}>
-        {!hideHeading &&
-          this.createHeading(isLoading, hasResults, resultsNumber ?? 0)}
-        {this.createViewContent(viewData)}
-      </div>
-    );
-  }
+  return (
+    <div className={styles.root}>
+      {!hideHeading && createHeading(isLoading, hasResults, resultsNumber ?? 0)}
+      {createViewContent(viewData)}
+    </div>
+  );
 }
